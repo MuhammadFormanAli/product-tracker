@@ -54,7 +54,7 @@ const AddProduct = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-8 rounded-lg shadow-md w-full flex flex-col gap-[20px] "
       >
-        <div className="grid grid-cols-2 gap-[10px]">
+        <div className="grid grid-cols-2 gap-[10px] border p-2">
           {/*1. Category field  */}
           <div>
             <label className="block text-gray-700 mb-1" htmlFor="category">
@@ -235,23 +235,16 @@ const AddProduct = () => {
           </div>
         </div>
 
-
-
-
-
-{/* In Use Form Section */}
+        {/* In Use Form Section */}
         <div
-          className={`overflow-hidden transition-all duration-1000
-    ${status === "inUse" ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
+          className={`overflow-hidden transition-all duration-1000 grid grid-cols-2 gap-[10px] border p-2 
+    ${status === "inUse" ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}
   `}
         >
-          <div className="border rounded p-2">
+          <div className="">
             {/* 1. User Name field  */}
             <div>
-              <label
-                className="block text-gray-700 mb-1"
-                htmlFor="userName"
-              >
+              <label className="block text-gray-700 mb-1" htmlFor="userName">
                 User Name
               </label>
               <input
@@ -270,23 +263,145 @@ const AddProduct = () => {
           )} */}
             </div>
           </div>
+
+
+          <div className="">           
+            {/* 2. Employee Id field  */}
+            <div>
+              <label className="block text-gray-700 mb-1" htmlFor="employeeId">
+                Employee Id
+              </label>
+              <input
+                {...register("employeeId", {
+                  required: " Id is required",
+                })}
+                type="text"
+                id="employeeId"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.userName ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>
+          )} */}
+            </div>
+          </div>
+
+
+          <div className="">
+            {/* 3. location field  */}
+            <div>
+              <label className="block text-gray-700 mb-1" htmlFor="location">
+                Location
+              </label>
+              <input
+                {...register("location", {
+                  required: " Name is required",
+                })}
+                type="text"
+                id="location"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.location ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+          )} */}
+            </div>
+          </div>
+
+
+          <div className="">
+            {/* 4. Designation field  */}
+            <div>
+              <label className="block text-gray-700 mb-1" htmlFor="designation">
+               Designation
+              </label>
+              <input
+                {...register("designation", {
+                  required: " Designation is required",
+                })}
+                type="text"
+                id="designation"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.designation ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>
+          )} */}
+            </div>
+          </div>
+
+
+          <div className="">
+            {/* 5. phone number field  */}
+            <div>
+              <label className="block text-gray-700 mb-1" htmlFor="phone">
+                Phone
+              </label>
+              <input
+                {...register("phone", {
+                  required: " Phone is required",
+                })}
+                type="text"
+                id="phone"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.phone ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+          )} */}
+            </div>
+          </div>
+
+
+          <div className="">
+            {/* 5. Email number field  */}
+            <div>
+              <label className="block text-gray-700 mb-1" htmlFor="mail">
+                Email
+              </label>
+              <input
+                {...register("mail", {
+                  required: " Mail is required",
+                })}
+                type="text"
+                id="mail"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.mail ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.mail.message}</p>
+          )} */}
+            </div>
+          </div>
+
         </div>
 
 
-{/* In Repair Form Section */}
+
+        {/* In Repair Form Section */}
         <div
-          className={`overflow-hidden transition-all duration-1000
-    ${status === "inRepair" ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
+          className={`overflow-hidden transition-all duration-1000 grid grid-cols-2 gap-[10px] border p-2
+    ${status === "inRepair" ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}
   `}
         >
-          <div className="border rounded p-2">
-            {/* 1. Service Center field  */}
+          <div className="">
+            {/* 1. Service Center name field  */}
             <div>
               <label
                 className="block text-gray-700 mb-1"
                 htmlFor="serviceCenter"
               >
-                Service Center Name
+                Name
               </label>
               <input
                 {...register("serviceCenter", {
@@ -304,6 +419,119 @@ const AddProduct = () => {
           )} */}
             </div>
           </div>
+
+
+          <div className="">
+            {/* 2. Service Center location  */}
+            <div>
+              <label
+                className="block text-gray-700 mb-1"
+                htmlFor="serviceCenterLocation"
+              >
+                Location
+              </label>
+              <input
+                {...register("serviceCenterLocation", {
+                  required: "Service Center Location is required",
+                })}
+                type="text"
+                id="serviceCenterLocation"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.serviceCenterLocation ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.serviceCenterLocation.message}</p>
+          )} */}
+            </div>
+          </div>
+
+
+          <div className="">
+            {/* 3. Service Center phone  */}
+            <div>
+              <label
+                className="block text-gray-700 mb-1"
+                htmlFor="serviceCenterPhone"
+              >
+                Phone
+              </label>
+              <input
+                {...register("serviceCenterPhone", {
+                  required: "Service Center Phone is required",
+                })}
+                type="text"
+                id="serviceCenterPhone"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.serviceCenterPhone ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.serviceCenterPhone.message}</p>
+          )} */}
+            </div>
+          </div>
+
+
+          <div className="">
+            {/* 4. Service Center email  */}
+            <div>
+              <label
+                className="block text-gray-700 mb-1"
+                htmlFor="serviceCenterEmail"
+              >
+                 Email
+              </label>
+              <input
+                {...register("serviceCenterEmail", {
+                  required: "Service Center Email is required",
+                })}
+                type="text"
+                id="serviceCenterEmail"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.serviceCenterEmail ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.serviceCenterEmail.message}</p>
+          )} */}
+            </div>
+          </div>
+
+          <div className="">
+            {/* 1. carrier Name */}
+            <div>
+              <label
+                className="block text-gray-700 mb-1"
+                htmlFor="carrierName"
+              >
+                Carrier Name
+              </label>
+              <input
+                {...register("carrierName", {
+                  required: "Carrier Name is required",
+                })}
+                type="text"
+                id="carrierName"
+                placeholder=""
+                className={`w-full px-4 py-2 border ${
+                  errors.carrierName ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {/* {errors.carrierName && (
+            <p className="text-red-500 text-sm mt-1">{errors.carrierName.message}</p>
+          )} */}
+            </div>
+          </div>
+
+          
+
+         
+
+
         </div>
 
         <input

@@ -36,7 +36,7 @@ const Sidebar = () => {
       `}
     >
       {/* Header */}
-      <div className="h-14 flex items-center px-4 border-b bg-[#5D2E23]  backdrop-blur-2xl">
+      <div className="h-14 flex items-center px-4 border-b bg-blue-600 backdrop-blur-2xl">
         <button
           onClick={() => setOpen(!open)}
           className="relative p-2 rounded hover:bg-gray-800 transition border"

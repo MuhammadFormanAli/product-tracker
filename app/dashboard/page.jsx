@@ -5,7 +5,7 @@ const Dashboard = () => {
 
 
     return (
-        <div>
+        <div className='p-6'>
             <CategoryCards />
         </div>
     );

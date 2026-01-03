@@ -36,17 +36,18 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
+    <div className="h-full flex items-center justify-center bg-[url('/login-bg.jpg')]  bg-cover bg-no-repeat bg-center ">
+      <div className="bg-[#00000071] h-full w-full flex items-center justify-center ">
+        <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-6"
+        className="bg-[#ffffff10] p-8 rounded-lg shadow-md w-full max-w-sm space-y-6 backdrop-blur-2xl text-white"
       >
-        <h2 className="text-2xl font-bold text-gray-800 text-center">
+        <h2 className="text-2xl font-bold  text-center">
           Register
         </h2>
 
         <div>
-          <label className="block text-gray-700 mb-1" htmlFor="adminName">
+          <label className="block  mb-1" htmlFor="adminName">
             Name
           </label>
           <input
@@ -63,7 +64,7 @@ const Register = () => {
           )} */}
         </div>
         <div>
-          <label className="block text-gray-700 mb-1" htmlFor="employeeId">
+          <label className="block  mb-1" htmlFor="employeeId">
             Employee ID
           </label>
           <input
@@ -80,7 +81,7 @@ const Register = () => {
           )} */}
         </div>
         <div>
-          <label className="block text-gray-700 mb-1" htmlFor="password">
+          <label className="block  mb-1" htmlFor="password">
             Password
           </label>
           <input
@@ -117,6 +118,7 @@ const Register = () => {
           </Link>
         </p>
       </form>
+      </div>
     </div>
   );
 };

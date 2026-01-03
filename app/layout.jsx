@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
+import Provider from "./provider/Provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,27 +23,29 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 text-gray-800`}
-      >
-        {/* Root wrapper must be fixed height */}
-        <div className="flex h-screen overflow-hidden">
-          {/* ================= Sidebar ================= */}
-          <Sidebar />
+      <Provider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-gray-800`}
+        >
+          {/* Root wrapper must be fixed height */}
+          <div className="flex h-screen overflow-hidden">
+            {/* ================= Sidebar ================= */}
+            <Sidebar />
 
-          {/* ================= Content Area ================= */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Navbar (fixed, no scroll) */}
-            <div className="shrink-0">
-              <Navbar />
+            {/* ================= Content Area ================= */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Navbar (fixed, no scroll) */}
+              <div className="shrink-0">
+                <Navbar />
+              </div>
+
+              {/* Main Content (ONLY THIS SCROLLS) */}
+              <main className="flex-1 overflow-y-auto  ">{children}</main>
+              <Footer />
             </div>
-
-            {/* Main Content (ONLY THIS SCROLLS) */}
-            <main className="flex-1 overflow-y-auto p-6 ">{children}</main>
-            <Footer />
           </div>
-        </div>
-      </body>
+        </body>
+      </Provider>
     </html>
   );
 }

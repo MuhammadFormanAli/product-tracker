@@ -35,15 +35,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
+    <div className="h-full flex items-center justify-center bg-[url('/login-bg.jpg')]  bg-cover bg-no-repeat bg-center ">
+      <div className="bg-[#00000071] h-full w-full flex items-center justify-center ">
+        <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm space-y-6"
+        className="bg-[#ffffff10] p-8 rounded-lg shadow-md w-full max-w-sm space-y-6 backdrop-blur-2xl text-white"
       >
-        <h2 className="text-2xl font-bold text-gray-800 text-center">Login</h2>
+        <h2 className="text-2xl font-bold text-white text-center">Login</h2>
 
         <div>
-          <label className="block text-gray-700 mb-1" htmlFor="email">
+          <label className="block  mb-1" htmlFor="email">
             Email
           </label>
           <input
@@ -61,7 +62,7 @@ const Login = () => {
         </div>
 
         <div>
-          <label className="block text-gray-700 mb-1" htmlFor="password">
+          <label className="block  mb-1" htmlFor="password">
             Password
           </label>
           <input
@@ -91,6 +92,7 @@ const Login = () => {
         )} */}
         <p>Don't Have Account <Link className="underline text-[#5C2E23]" href="/register">Register</Link></p>
       </form>
+      </div>
     </div>
   );
 };

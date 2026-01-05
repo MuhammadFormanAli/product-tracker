@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Provider from "./provider/Provider";
 import { getAuthUser } from "@/lib/auth";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +50,9 @@ export default function RootLayout({ children }) {
               <Footer />
             </div>
           </div>
+           <ToastContainer />
         </body>
+
       </Provider>
     </html>
   );

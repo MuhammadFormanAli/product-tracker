@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Provider from "./provider/Provider";
+import { getAuthUser } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +22,10 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
+  const loggedUser = getAuthUser()
+  
+
   return (
     <html lang="en">
       <Provider>
@@ -36,7 +41,7 @@ export default function RootLayout({ children }) {
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Navbar (fixed, no scroll) */}
               <div className="shrink-0">
-                <Navbar />
+                <Navbar user = {loggedUser} ></Navbar>
               </div>
 
               {/* Main Content (ONLY THIS SCROLLS) */}

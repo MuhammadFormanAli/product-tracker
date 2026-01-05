@@ -1,10 +1,10 @@
 "use client";
+import axios from "axios";
 import Link from "next/link";
-// import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-// import toast from "react-hot-toast";
+
 
 const Login = () => {
   const router = useRouter()
@@ -13,25 +13,18 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  // const [submittedData, setSubmittedData] = useState("");
+
 
   const onSubmit  = async (data) => {
 
-    // setSubmittedData(JSON.stringify(data, null, 2));
+ 
 
-    // const res = await axios.post('http://192.168.15.52:3000/api/admin', data)
+    const res = await axios.post('http://172.22.90.22:3000/api/auth/login', data)
+    console.log(res)
+    if(res?.data){
+      router.push('/dashboard')
+    }
 
-// if (res?.data?.userRole === 'admin') {
-//   localStorage.setItem('userRole','admin')
-//   toast.success('Login Successful ')
-//   router.push('/')
-// }else{
-//   localStorage.clear()
-//   toast.error(res.data.message)
-// }
-    
-    // console.log('response from backend',res.data)
-    
   };
 
   return (
@@ -44,20 +37,20 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-white text-center">Login</h2>
 
         <div>
-          <label className="block  mb-1" htmlFor="email">
-            Email
+          <label className="block  mb-1" htmlFor="employeeId">
+            Employee Id
           </label>
           <input
-            {...register("email", { required: "Email is required" })}
-            type="email"
-            id="email"
-            placeholder="you@example.com"
+            {...register("employeeId", { required: "Employee Id is required" })}
+            type="text"
+            id="employeeId"
+            placeholder=""
             className={`w-full px-4 py-2 border ${
-              errors.email ? "border-red-500" : "border-gray-300"
+              errors.employeeId ? "border-red-500" : "border-gray-300"
             } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          {errors.employeeId && (
+            <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>
           )}
         </div>
 

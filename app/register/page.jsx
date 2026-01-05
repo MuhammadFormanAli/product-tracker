@@ -21,18 +21,23 @@ const Register = () => {
 
   
 
-    const res = await axios.post("http://172.22.90.22:3000/api/adminUser", data);
+    const res = await axios.post("http://172.22.90.22:3000/api/auth/register", data);
 
-    if (res?.data?.userRole === "admin") {
-      localStorage.setItem("userRole", "admin");
-      toast.success("Register Successful ");
-      router.push("/");
-    } else {
-      localStorage.clear();
-      toast.error(res.data.message);
-    }
+    if (res?.data) router.push("/dashboard");
+    console.log(res)
 
-    console.log('response from res',res)
+    // if (res?.data?.userRole === "admin") {
+    //   localStorage.setItem("userRole", "admin");
+    //   toast.success("Register Successful ");
+    //   router.push("/");
+    // } else {
+    //   localStorage.clear();
+    //   toast.error(res.data.message);
+    // }
+
+
+
+    console.log('response from res',res.data.message)
   };
 
   return (

@@ -5,7 +5,11 @@ const AdminUserSchema = new mongoose.Schema(
     adminName: { type: String, required: true },
     employeeId: { type: String, required: true, unique: true },
     password: { type: String, required: true, },
-    userRole: { type: String, default: "admin"},
+    userRole: {
+      type: String,
+      enum: ["admin", "super_admin"],
+      default: "admin",
+    },
   },
   { timestamps: true }
 );

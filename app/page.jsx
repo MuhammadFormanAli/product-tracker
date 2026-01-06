@@ -15,6 +15,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import AddAssetModal from "./components/AddAssetModal";
+import Loading from "./loading";
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -94,9 +95,7 @@ const Page = () => {
   /* ================= STATES ================= */
   if (isPending) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-lg">Loading assets...</p>
-      </div>
+     <Loading />
     );
   }
 

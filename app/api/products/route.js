@@ -93,7 +93,6 @@
 // import Product from "@/models/Product";
 
 import { NextResponse } from "next/server";
-// import dbConnect from "@/lib/db";
 import Product from "@/models/Product";
 import { dbConnect } from "@/lib/mongoose";
 
@@ -157,7 +156,7 @@ export async function GET(req) {
       query.$or = [
         { serialNumber: { $regex: search, $options: "i" } },
         { brand: { $regex: search, $options: "i" } },
-        { model: { $regex: search, $options: "i" } },
+        { model: { $regex: search, $options: "i" } },        { category: { $regex: search, $options: "i" } },
       ];
     }
 

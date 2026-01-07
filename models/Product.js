@@ -1,17 +1,62 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
+const AssignedUserSchema = new mongoose.Schema(
+  {
+    userName: String,
+    employeeId: String,
+    designation: String,
+    location: String,
+    phone: String,
+    email: String,
+  },
+  { _id: false }
+);
 
-const ProductSchema = new mongoose.Schema({
-category: { type: String, required: true },
-serialNumber: { type: String, required: true, },
-brand: String,
-model: String,
-status: { type: String, default: 'inStock' },
-purchaseDate: Date,
-warranty: String,
-remarks: String,
-user:Array
-}, { timestamps: true });
+const RepairInfoSchema = new mongoose.Schema(
+  {
+    serviceCenter: String,
+    location: String,
+    phone: String,
+    email: String,
+    carrierName: String,
+  },
+  { _id: false }
+);
 
+const ProductSchema = new mongoose.Schema(
+  {
+    category: {
+      type: String,
+      required: true,
+      index: true,
+    },
 
-export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
+    serialNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+
+    brand: String,
+    model: String,
+
+    purchaseDate: Date,
+    warranty: String,
+    remarks: String,
+
+    
+    status: {
+      type: String,
+      enum: ["inStock", "inUse", "inRepair", "damage"],
+      default: "inStock", // ✅ DEFAULT
+    },
+
+    assignedUser: AssignedUserSchema, // only for inUse
+    repairInfo: RepairInfoSchema, // only for inRepair
+  },
+  { timestamps: true }
+);
+
+export default mongoose.models.Product ||
+  mongoose.model("Product", ProductSchema);

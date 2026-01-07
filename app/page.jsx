@@ -1,223 +1,141 @@
-
-
-// using react query
-
-
-
 "use client";
-
-import React, { useState } from "react";
-import Link from "next/link";
-import axios from "axios";
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import AddAssetModal from "./components/AddAssetModal";
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useState } from "react";
+import { productColumns } from "./components/productColumns";
+import { useProducts } from "@/hooks/useProducts";
 import Loading from "./loading";
 
-const Page = () => {
-  const queryClient = useQueryClient();
+export default function ProductTable() {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
 
-  const [query, setQuery] = useState("");
-  const [filterType, setFilterType] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [showModal, setShowModal] = useState(false);
-
-  /* ================= PRODUCTS ================= */
-  const {
-    data: products = [],
-    isPending,
-    error,
-  } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      const res = await axios.get("/api/products");
-      return res.data;
-    },
+  const { data, isLoading, isFetching } = useProducts({
+    page,
+    search,
+    status,
   });
 
-  /* ================= CATEGORIES ================= */
-  const { data: categories = [] } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const res = await axios.get("/api/category");
-      return res.data;
-    },
+  const table = useReactTable({
+    data: data?.data ?? [],
+    columns: productColumns,
+    getCoreRowModel: getCoreRowModel(),
   });
 
-  /* ================= CREATE PRODUCT ================= */
-  const createMutation = useMutation({
-    mutationFn: async (payload) => {
-      const res = await axios.post("/api/products", payload);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      setShowModal(false);
-    },
-  });
+  return (
+    <div className="bg-white rounded-lg shadow p-4">
+      {/* Search & Filter */}
+      <div className="flex gap-4 mb-4">
+        <input
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder="Search serial / brand / model"
+          className="border px-3 py-2 rounded w-full"
+        />
 
-  /* ================= DELETE PRODUCT ================= */
-  const deleteMutation = useMutation({
-    mutationFn: async (id) => {
-      await axios.delete(`/api/products/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-    },
-  });
-
-  const handleDelete = (id) => {
-    if (confirm("Delete this asset?")) {
-      deleteMutation.mutate(id);
-    }
-  };
-
-  /* ================= FILTER ================= */
-  const filteredProducts = products.filter((p) => {
-    if (
-      query &&
-      !Object.values(p)
-        .join(" ")
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    )
-      return false;
-
-    if (filterType && p.category !== filterType) return false;
-    if (filterStatus && p.status !== filterStatus) return false;
-
-    return true;
-  });
-
-  /* ================= STATES ================= */
-  if (isPending) {
-    return (
-     <Loading />
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-red-600">Failed to load data</p>
+        <select
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value);
+            setPage(1);
+          }}
+          className="border px-3 py-2 rounded"
+        >
+          <option value="">All Status</option>
+          <option value="inStock">In Stock</option>
+          <option value="inUse">In Use</option>
+          <option value="inRepair">In Repair</option>
+          <option value="damage">Damage</option>
+        </select>
+        
       </div>
-    );
-  }
 
-  /* ================= UI ================= */
- return (
-    <div className="w-full max-w-[1880px] mx-auto p-4">
-      <main className="flex-1">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-semibold">Inventory Management</h1>
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            + Add Asset
-          </button>
-        </div>
-
-        {/* Search & Filters */}
-        <div className="mb-4 bg-gray-50 border p-4 rounded flex flex-wrap gap-4 justify-between">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search assets..."
-            className="border px-3 py-2 rounded w-64"
-          />
-
-          <div className="flex gap-2">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="border px-3 py-2 rounded"
-            >
-              <option value="">Filter by Category</option>
-              {categories.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.name}
-                </option>
+      {/* Table */}
+      <table className="w-full border">
+        <thead className="bg-gray-100">
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => (
+                <th key={header.id} className="p-2 border">
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </th>
               ))}
-            </select>
+            </tr>
+          ))}
+        </thead>
 
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="border px-3 py-2 rounded"
-            >
-              <option value="">Filter by Status</option>
-              <option>In Stock</option>
-              <option>In Use</option>
-              <option>In Repair</option>
-              <option>Damage</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto bg-white border rounded shadow-sm">
-          <table className="min-w-full text-sm">
-            <thead className="bg-blue-600 text-white">
-              <tr>
-                <th className="px-4 py-3 text-left">S/N</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Brand</th>
-                <th className="px-4 py-3 text-left">Model</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-center">Actions</th>
+        <tbody>
+          {/* Loading State */}
+          {isLoading || isFetching ? (
+            <tr>
+              <td
+                colSpan={productColumns.length}
+                className="p-6 text-center"
+              >
+                <Loading />
+              </td>
+            </tr>
+          ) : table.getRowModel().rows.length === 0 ? (
+            /* Empty State */
+            <tr>
+              <td
+                colSpan={productColumns.length}
+                className="p-6 text-center text-gray-500"
+              >
+                No products found
+              </td>
+            </tr>
+          ) : (
+            /* Data Rows */
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className="hover:bg-gray-50">
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="p-2 border">
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                  </td>
+                ))}
               </tr>
-            </thead>
+            ))
+          )}
+        </tbody>
+      </table>
 
-            <tbody>
-              {filteredProducts.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="text-center p-4">
-                    No assets found
-                  </td>
-                </tr>
-              )}
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          disabled={page === 1 || isFetching}
+          onClick={() => setPage((p) => p - 1)}
+        >
+          Prev
+        </button>
 
-              {filteredProducts.map((p) => (
-                <tr key={p._id} className="border-t hover:bg-gray-50">
-                  <td className="px-4 py-3">{p.serialNumber}</td>
-                  <td className="px-4 py-3">{p.category}</td>
-                  <td className="px-4 py-3">{p.brand}</td>
-                  <td className="px-4 py-3">{p.model}</td>
-                  <td className="px-4 py-3 font-semibold">{p.status}</td>
-                  <td className="px-4 py-3 text-center space-x-2">
-                    <Link
-                      href="/details"
-                      className="bg-blue-600 text-white px-3 py-1 rounded"
-                    >
-                      Details
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(p._id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+        <span>
+          Page {data?.pagination?.page ?? 1} of{" "}
+          {data?.pagination?.totalPages ?? 1}
+        </span>
 
-      {/* Modal */}
-      <AddAssetModal
-        open={showModal}
-        onClose={() => setShowModal(false)}
-        onCreate={(payload) => createMutation.mutate(payload)}
-      />
+        <button
+          disabled={
+            page === data?.pagination?.totalPages || isFetching
+          }
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
-};
-
-export default Page;
+}

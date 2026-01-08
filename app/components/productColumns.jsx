@@ -58,9 +58,9 @@ columnHelper.display({
   cell: ({ row }) => (
   <Link
     href={`/products/${row.original._id}`}
-    className="text-blue-600 hover:underline font-medium"
+    className="text-white  font-medium  px-2 py-[6px] bg-blue-500 rounded "
   >
-    View Details
+    Details
   </Link>
 )
 

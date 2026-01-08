@@ -1,138 +1,110 @@
-// export async function GET(req) {
-
-//     try {
-//        await dbConnect();
-// const products = await Product.find().sort({ createdAt: -1 }).lean();
-// return NextResponse.json(products)
-//     } catch (error) {
-//         console.error('Error fetching product:', error);
-//         return NextResponse.status(500).json({ error: 'Internal server error' });
-//     }
-
-// }
-
-// export async function POST(request) {
-// try {
-// await dbConnect();
-// const body = await request.json();
-// // Basic validation
-// if (!body.serialNumber || !body.category) {
-// return new Response(JSON.stringify({ error: 'serial number and category are required' }), { status: 400 });
-// }
-
-// console.log('console from backend',body)
-// const created = await Product.create(body);
-// return new Response(JSON.stringify({created:'success'}), { status: 201 });
-// } catch (err) {
-// console.error(err);
-// return new Response(JSON.stringify({ error: err.message }), { status: 500 });
-// }
-// }
-
-// ------------------------------------------------
-// new code for product api
-
-// app/api/products/route.js
-// import { dbConnect } from "@/lib/mongoose";
-// import Product from "@/models/Product";
-// import { NextResponse } from "next/server";
-
-// export async function GET(req) {
-//   try {
-//     await dbConnect();
-
-//     const { searchParams } = new URL(req.url);
-
-//     const page = Number(searchParams.get("page")) || 1;
-//     const limit = Number(searchParams.get("limit")) || 10;
-//     const search = searchParams.get("search") || "";
-//     const status = searchParams.get("status");
-
-//     const skip = (page - 1) * limit;
-
-//     const query = {
-//       ...(search && {
-//         $or: [
-//           { serialNumber: { $regex: search, $options: "i" } },
-//           { brand: { $regex: search, $options: "i" } },
-//           { model: { $regex: search, $options: "i" } },
-//         ],
-//       }),
-//       ...(status && { status }),
-//     };
-
-//     const [products, total] = await Promise.all([
-//       Product.find(query)
-//         .sort({ createdAt: -1 })
-//         .skip(skip)
-//         .limit(limit)
-//         .lean(),
-//       Product.countDocuments(query),
-//     ]);
-
-//     return NextResponse.json({
-//       data: products,
-//       pagination: {
-//         page,
-//         limit,
-//         total,
-//         totalPages: Math.ceil(total / limit),
-//       },
-//     });
-//   } catch (error) {
-//     console.error("PRODUCT FETCH ERROR:", error);
-//     return NextResponse.json(
-//       { message: "Failed to fetch products" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// import { NextResponse } from "next/server";
-// import dbConnect from "@/lib/db";
-// import Product from "@/models/Product";
-
 import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 import { dbConnect } from "@/lib/mongoose";
 
 /* ================= ADD PRODUCT ================= */
-
 export async function POST(req) {
   try {
     await dbConnect();
-
     const body = await req.json();
 
-    // console.log("Incoming Product:", body);
+    const {
+      category,
+      serialNumber,
+      brand,
+      model,
+      purchaseDate,
+      warranty,
+      remarks,
+      status,
 
-    if (!body.category || !body.serialNumber) {
+      // inUse
+      userName,
+      employeeId,
+      designation,
+      location,
+      phone,
+      mail,
+
+      // inRepair
+      serviceCenter,
+      serviceCenterLocation,
+      serviceCenterPhone,
+      serviceCenterEmail,
+      carrierName,
+    } = body;
+
+    // ✅ ONLY REQUIRED FIELDS
+    if (!category || !serialNumber) {
       return NextResponse.json(
         { message: "Category and Serial Number are required" },
         { status: 400 }
       );
     }
 
-    const product = await Product.create(body);
+    // 🔴 DUPLICATE SERIAL CHECK
+    const exists = await Product.findOne({ serialNumber });
+    if (exists) {
+      return NextResponse.json(
+        { message: "Serial number already exists" },
+        { status: 409 }
+      );
+    }
 
-    return NextResponse.json(
-      { message: "Product created", product },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error("POST PRODUCT ERROR:", error);
+    // 🟢 BASE PAYLOAD
+    const payload = {
+      category,
+      serialNumber,
+      brand,
+      model,
+      purchaseDate,
+      warranty,
+      remarks,
+      status, // default = inStock
+    };
+
+    // 🟡 OPTIONAL inUse DATA
+    if (status === "inUse") {
+      payload.assignedUser = {
+        userName,
+        employeeId,
+        designation,
+        location,
+        phone,
+        email: mail,
+      };
+    }
+
+    // 🟡 OPTIONAL inRepair DATA
+    if (status === "inRepair") {
+      payload.repairInfo = {
+        serviceCenter,
+        location: serviceCenterLocation,
+        phone: serviceCenterPhone,
+        email: serviceCenterEmail,
+        carrierName,
+      };
+    }
+
+    const product = await Product.create(payload);
 
     return NextResponse.json(
       {
-        message:
-          error.code === 11000
-            ? "Serial number already exists"
-            : "Failed to create product",
+        message: "Product added successfully",
+        product,
       },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("ADD PRODUCT ERROR:", error);
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
+
 
 /* ================= GET PRODUCTS ================= */
 export async function GET(req) {
@@ -156,7 +128,10 @@ export async function GET(req) {
       query.$or = [
         { serialNumber: { $regex: search, $options: "i" } },
         { brand: { $regex: search, $options: "i" } },
-        { model: { $regex: search, $options: "i" } },        { category: { $regex: search, $options: "i" } },
+        { model: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+        { userName: { $regex: search, $options: "i" } },
+        { employeeId: { $regex: search, $options: "i" } },
       ];
     }
 

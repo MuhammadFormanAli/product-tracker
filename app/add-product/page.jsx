@@ -124,7 +124,7 @@ const AddProduct = () => {
             <input {...register("designation", { required: true })} placeholder="Designation" className="input" />
             <input {...register("location", { required: true })} placeholder="Location" className="input" />
             <input {...register("phone", { required: true })} placeholder="Phone" className="input" />
-            <input type="email" {...register("mail", { required: true })} placeholder="Email" className="input" />
+            <input type="email" {...register("mail")} placeholder="Email" className="input" />
           </div>
         )}
 

@@ -24,6 +24,7 @@ const Sidebar = () => {
     { name: "Dashboard", icon: MdDashboard, href: "/dashboard" },
     { name: "Products", icon: MdDevices, href: "/" },
     { name: "Add Product", icon: MdAddBox, href: "/add-product" },
+    { name: "Add Category", icon: MdAddBox, href: "/add-category" },
   ];
 
   return (

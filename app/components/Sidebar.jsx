@@ -24,7 +24,8 @@ const Sidebar = () => {
     { name: "Dashboard", icon: MdDashboard, href: "/dashboard" },
     { name: "Products", icon: MdDevices, href: "/" },
     { name: "Add Product", icon: MdAddBox, href: "/add-product" },
-    { name: "Add Category", icon: MdAddBox, href: "/add-category" },
+    { name: "Categories", icon: MdAddBox, href: "/category" },
+    { name: "Add Category", icon: MdAddBox, href: "category/add" },
   ];
 
   return (
@@ -124,11 +125,6 @@ const Sidebar = () => {
           );
         })}
       </nav>
-
-      {/* Footer */}
-      {/* <div className="p-4 border-t border-gray-800 text-sm">
-         © {open ? " 2025 MyApp" : ""}
-        </div> */}
     </aside>
   );
 };

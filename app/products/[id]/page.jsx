@@ -5,8 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Loading from "@/app/loading";
 import { toast } from "react-toastify";
-// import Loading from "@/app/loading";
-// import toast from "react-hot-toast";
 
 const ProductDetails = () => {
   const params = useParams();

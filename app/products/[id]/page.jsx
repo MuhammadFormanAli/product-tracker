@@ -87,8 +87,7 @@ const ProductDetails = () => {
               {product?.repairInfo?.serviceCenter}
             </p>
             <p>
-              <strong>Location:</strong>{" "}
-              {product?.repairInfo?.location}
+              <strong>Location:</strong> {product?.repairInfo?.location}
             </p>
             <p>
               <strong>Phone:</strong> {product?.repairInfo?.phone}
@@ -102,6 +101,13 @@ const ProductDetails = () => {
           </>
         )}
       </div>
+
+      <button
+        onClick={() => router.push(`/products/${product._id}/print`)}
+        className="bg-gray-900 text-white px-4 py-2 rounded w-fit mx-auto mt-4"
+      >
+        Print
+      </button>
     </div>
   );
 };

@@ -34,7 +34,7 @@ const PrintPage = () => {
     <>
       {/* PRINT AREA ONLY */}
       
-      <div id="asset-print-area" className="print-sheet">
+      <div id="asset-print-area" className="print-sheet p-4">
         {/* HEADER */}
         <div className="text-center mb-4">
           <h1 className="text-2xl font-bold">Asset Report</h1>
@@ -120,6 +120,8 @@ const PrintPage = () => {
           }
         }
       `}</style>
+
+      
     </>
   );
 };

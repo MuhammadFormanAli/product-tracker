@@ -16,10 +16,11 @@ export async function POST(req) {
   }
 
   const token = signToken({
-    id: admin?._id,
-    employeeId: admin?.email,
-    userRole: admin?.userRole,
-  });
+        id: admin._id,
+        employeeId: admin.employeeId,
+        userRole: admin.userRole,
+        adminName:admin.adminName
+      });
 
   const res = NextResponse.json({ message: "Logged in" });
   res.cookies.set("token", token, {

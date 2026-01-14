@@ -23,7 +23,7 @@ const Sidebar = () => {
   const menu = [
     { name: "Dashboard", icon: MdDashboard, href: "/dashboard" },
     { name: "Products", icon: MdDevices, href: "/" },
-    { name: "Add Product", icon: MdAddBox, href: "/add-product" },
+    { name: "Add Product", icon: MdAddBox, href: "/products/add" },
     { name: "Categories", icon: MdAddBox, href: "/category" },
     { name: "Add Category", icon: MdAddBox, href: "category/add" },
   ];

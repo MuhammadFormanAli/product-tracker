@@ -11,9 +11,6 @@ const statusStyles = {
 };
 
 export const productColumns = [
-
-
-
   columnHelper.accessor("serialNumber", {
     header: "Serial No",
   }),
@@ -28,46 +25,37 @@ export const productColumns = [
     header: "Model",
   }),
 
-columnHelper.accessor("status", {
-  header: "Status",
-  cell: (info) => {
-    const status = info.getValue();
+  columnHelper.accessor("status", {
+    header: "Status",
+    cell: (info) => {
+      const status = info.getValue();
 
-    return (
-      <span
-        className={`capitalize px-3 py-1 rounded-full text-xs font-semibold
+      return (
+        <span
+          className={`capitalize px-3 py-1 rounded-full text-xs font-semibold
           ${statusStyles[status] || "text-gray-600 bg-gray-100"}`}
-      >
-        {status.replace(/([A-Z])/g, " $1")}
-      </span>
-    );
-  },
-}),
-
-
+        >
+          {status.replace(/([A-Z])/g, " $1")}
+        </span>
+      );
+    },
+  }),
 
   columnHelper.accessor("purchaseDate", {
     header: "Purchase Date",
-    cell: (info) =>
-      new Date(info.getValue()).toLocaleDateString(),
+    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
   }),
 
-columnHelper.display({
-  id: "actions",
-  header: "Actions",
-  cell: ({ row }) => (
-  <Link
-    href={`/products/${row.original._id}`}
-    className="text-white  font-medium  px-2 py-[6px] bg-blue-500 rounded "
-  >
-    Details
-  </Link>
-)
-
-})
-
-
-
-
-
+  columnHelper.display({
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <Link
+        href={`/products/${row.original._id}/details`}
+        className="text-white  font-medium  px-2 py-[6px] bg-blue-500 rounded "
+      >
+        Details
+      </Link>
+    ),
+  }),
 ];

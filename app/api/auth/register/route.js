@@ -44,6 +44,7 @@ export async function POST(req) {
       id: admin._id,
       employeeId: admin.employeeId,
       userRole: admin.userRole,
+      adminName:admin.adminName
     });
 
     // 6️ Send response with cookie

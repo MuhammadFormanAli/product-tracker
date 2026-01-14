@@ -9,7 +9,7 @@ import { productColumns } from "./components/productColumns";
 import { useProducts } from "@/hooks/useProducts";
 import Loading from "./loading";
 
-export default function ProductTable() {
+const ProductTable =()=> {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -139,3 +139,6 @@ export default function ProductTable() {
     </div>
   );
 }
+
+
+export default ProductTable;

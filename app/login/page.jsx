@@ -23,6 +23,7 @@ const Login = () => {
     console.log(res)
     if(res?.data){
       router.push('/dashboard')
+      window.location.reload();
     }
 
   };
@@ -77,12 +78,6 @@ const Login = () => {
           value="Log In"
           className="w-full bg-[#5C2E23] text-white py-2 rounded-md hover:bg-blue-700 transition"
         />
-
-        {/* {submittedData && (
-          <pre className="bg-gray-100 p-4 text-sm rounded text-gray-700 mt-4">
-            {submittedData}
-          </pre>
-        )} */}
         <p>Don't Have Account <Link className="underline text-[#5C2E23]" href="/register">Register</Link></p>
       </form>
       </div>

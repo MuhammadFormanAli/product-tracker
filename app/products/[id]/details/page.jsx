@@ -1,115 +1,172 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Loading from "@/app/loading";
 import { toast } from "react-toastify";
 
-const ProductDetails = () => {
-  const params = useParams();
+export default function ProductDetails() {
+  const { id } = useParams();
   const router = useRouter();
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`/api/products/${params.id}`);
+        const res = await axios.get(`/api/products/${id}`);
         setProduct(res.data);
-        console.log(res.data);
-      } catch (error) {
-        toast.error("Failed to fetch product");
+      } catch (err) {
+        toast.error("Failed to load product");
         router.back();
       } finally {
         setLoading(false);
       }
     };
     fetchProduct();
-  }, [params.id]);
+  }, [id, router]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   if (loading) return <Loading />;
-
-  if (!product) return <p className="text-center mt-6">No product found</p>;
+  if (!product) return null;
 
   return (
-    <div className="p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Product Details</h1>
-      <div className="grid grid-cols-2 gap-4">
-        <p>
-          <strong>Serial Number:</strong> {product?.serialNumber}
-        </p>
-        <p>
-          <strong>Brand:</strong> {product?.brand}
-        </p>
-        <p>
-          <strong>Model:</strong> {product?.model}
-        </p>
-        <p>
-          <strong>Category:</strong> {product?.category}
-        </p>
-        <p>
-          <strong>Status:</strong> {product?.status}
-        </p>
-        <p>
-          <strong>Remarks:</strong> {product?.remarks}
-        </p>
+    <div className="p-6 bg-white rounded shadow max-w-5xl mx-auto">
+      {/* HEADER */}
+      <div className="flex items-center justify-between border-b pb-3 mb-6">
+        <h1 className="text-2xl font-bold">Product Details</h1>
 
-        {/* IN USE */}
-        {product?.status === "inUse" && (
+        {/* OPTIONS */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setOpen(!open)}
+            className="border px-4 py-1 rounded hover:bg-gray-100"
+          >
+            Options ⌄
+          </button>
+
+          {open && (
+            <Options
+              product={product}
+              router={router}
+              close={() => setOpen(false)}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* DETAILS */}
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <Field label="Serial Number" value={product.serialNumber} />
+        <Field label="Category" value={product.category} />
+        <Field label="Brand" value={product.brand || "-"} />
+        <Field label="Model" value={product.model || "-"} />
+        <Field label="Status" value={product.status} />
+        <Field label="Remarks" value={product.remarks || "-"} />
+
+        {product.status === "inUse" && product.assignedUser && (
           <>
-            <p>
-              <strong>User Name:</strong> {product?.assignedUser?.userName}
-            </p>
-            <p>
-              <strong>Employee ID:</strong> {product?.assignedUser?.employeeId}
-            </p>
-            <p>
-              <strong>Designation:</strong> {product?.assignedUser?.designation}
-            </p>
-            <p>
-              <strong>Location:</strong> {product?.assignedUser?.location}
-            </p>
-            <p>
-              <strong>Phone:</strong> {product?.assignedUser?.phone}
-            </p>
-            <p>
-              <strong>Email:</strong> {product?.assignedUser?.email}
-            </p>
+            <Field label="User Name" value={product.assignedUser.userName} />
+            <Field label="Employee ID" value={product.assignedUser.employeeId} />
+            <Field label="Designation" value={product.assignedUser.designation} />
+            <Field label="Location" value={product.assignedUser.location} />
+            <Field label="Phone" value={product.assignedUser.phone} />
+            <Field label="Email" value={product.assignedUser.email} />
           </>
         )}
 
-        {/* IN REPAIR */}
-        {product?.status === "inRepair" && (
+        {product.status === "inRepair" && product.repairInfo && (
           <>
-            <p>
-              <strong>Service Center:</strong>{" "}
-              {product?.repairInfo?.serviceCenter}
-            </p>
-            <p>
-              <strong>Location:</strong> {product?.repairInfo?.location}
-            </p>
-            <p>
-              <strong>Phone:</strong> {product?.repairInfo?.phone}
-            </p>
-            <p>
-              <strong>Email:</strong> {product?.repairInfo?.email}
-            </p>
-            <p>
-              <strong>Carrier Name:</strong> {product?.repairInfo?.carrierName}
-            </p>
+            <Field label="Service Center" value={product.repairInfo.serviceCenter} />
+            <Field label="Location" value={product.repairInfo.location} />
+            <Field label="Phone" value={product.repairInfo.phone} />
+            <Field label="Email" value={product.repairInfo.email} />
+            <Field label="Carrier Name" value={product.repairInfo.carrierName} />
           </>
         )}
       </div>
 
-      <button
-        onClick={() => router.push(`/products/${product._id}/print`)}
-        className="bg-gray-900 text-white px-4 py-2 rounded w-fit mx-auto mt-4"
-      >
-        Print
-      </button>
+      {/* PRINT */}
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={() => router.push(`/products/${product._id}/print`)}
+          className="bg-gray-900 text-white px-6 py-2 rounded hover:bg-black"
+        >
+          Print Asset
+        </button>
+      </div>
     </div>
   );
-};
+}
 
-export default ProductDetails;
+/* ================= OPTIONS ================= */
+
+function Options({ product, router, close }) {
+  const go = (path) => {
+    close();
+    router.push(`/products/${product._id}/${path}`);
+  };
+
+  return (
+    <div className="absolute right-0 mt-2 bg-white border rounded shadow w-60 z-50 text-sm">
+      {product.status === "inStock" && (
+        <>
+          <Option label="Assign to User" onClick={() => go("assign")} />
+          <Option label="Send to Repair" onClick={() => go("repair")} />
+          <Option label="Mark as Damaged" onClick={() => go("damage")} />
+        </>
+      )}
+
+      {product.status === "inUse" && (
+        <>
+          <Option label="Withdraw from User" onClick={() => go("withdraw")} />
+          <Option label="Send to Repair" onClick={() => go("repair")} />
+        </>
+      )}
+
+      {product.status === "inRepair" && (
+        <>
+          <Option label="Return to Stock" onClick={() => go("return-stock")} />
+          <Option label="Send to Service Center" onClick={() => go("service-center")} />
+          <Option label="Send to Supplier" onClick={() => go("supplier")} />
+        </>
+      )}
+    </div>
+  );
+}
+
+function Option({ label, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full text-left px-4 py-2 hover:bg-gray-100 border-b last:border-b-0"
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ================= HELPERS ================= */
+
+function Field({ label, value }) {
+  return (
+    <p>
+      <strong>{label}:</strong> {value}
+    </p>
+  );
+}

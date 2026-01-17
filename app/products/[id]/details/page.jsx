@@ -161,7 +161,7 @@ function Option({ label, onClick }) {
   );
 }
 
-/* ================= HELPERS ================= */
+/* ========= HELPERS ====== */
 
 function Field({ label, value }) {
   return (

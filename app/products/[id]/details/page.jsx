@@ -82,8 +82,14 @@ export default function ProductDetails() {
         {product.status === "inUse" && product.assignedUser && (
           <>
             <Field label="User Name" value={product.assignedUser.userName} />
-            <Field label="Employee ID" value={product.assignedUser.employeeId} />
-            <Field label="Designation" value={product.assignedUser.designation} />
+            <Field
+              label="Employee ID"
+              value={product.assignedUser.employeeId}
+            />
+            <Field
+              label="Designation"
+              value={product.assignedUser.designation}
+            />
             <Field label="Location" value={product.assignedUser.location} />
             <Field label="Phone" value={product.assignedUser.phone} />
             <Field label="Email" value={product.assignedUser.email} />
@@ -92,11 +98,17 @@ export default function ProductDetails() {
 
         {product.status === "inRepair" && product.repairInfo && (
           <>
-            <Field label="Service Center" value={product.repairInfo.serviceCenter} />
+            <Field
+              label="Service Center"
+              value={product.repairInfo.serviceCenter}
+            />
             <Field label="Location" value={product.repairInfo.location} />
             <Field label="Phone" value={product.repairInfo.phone} />
             <Field label="Email" value={product.repairInfo.email} />
-            <Field label="Carrier Name" value={product.repairInfo.carrierName} />
+            <Field
+              label="Carrier Name"
+              value={product.repairInfo.carrierName}
+            />
           </>
         )}
       </div>
@@ -114,7 +126,7 @@ export default function ProductDetails() {
   );
 }
 
-/* ================= OPTIONS ================= */
+/* ==== OPTIONS ==== */
 
 function Options({ product, router, close }) {
   const go = (path) => {
@@ -142,7 +154,10 @@ function Options({ product, router, close }) {
       {product.status === "inRepair" && (
         <>
           <Option label="Return to Stock" onClick={() => go("return-stock")} />
-          <Option label="Send to Service Center" onClick={() => go("service-center")} />
+          <Option
+            label="Send to Service Center"
+            onClick={() => go("service-center")}
+          />
           <Option label="Send to Supplier" onClick={() => go("supplier")} />
         </>
       )}

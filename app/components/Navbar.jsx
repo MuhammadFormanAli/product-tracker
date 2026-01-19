@@ -8,7 +8,7 @@ import React from "react";
 const Navbar = ({ user }) => {
   const pathname = usePathname();
   const router = useRouter();
-  // console.log('logged user',user)
+  console.log('logged user',user)
 
   const logout = async () => {
     const res = await axios.post("/api/auth/logout");

@@ -32,7 +32,7 @@ const PrintPage = () => {
 
   return (
     <>
-      {/* PRINT AREA ONLY */}
+      {/* PRINT AREA ONLY   */}
       
       <div id="asset-print-area" className="print-sheet p-4">
         {/* HEADER */}
@@ -45,7 +45,7 @@ const PrintPage = () => {
 
         <hr className="border-black mb-4" />
 
-        {/* PRODUCT INFORMATION */}
+        {/* PRODUCT INFORMATION        */}
         <Section title="Product Information">
           <Row label="Category" value={product.category} />
           <Row label="Serial Number" value={product.serialNumber} />

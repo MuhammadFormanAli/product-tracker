@@ -33,8 +33,8 @@ const [name, setName] = useState("");
       <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
         <h2 className="text-xl font-semibold mb-4">Add Category</h2>
 
-        <form onSubmit={handleSubmit} className=" flex gap-[10px] items-center flex-col ]">
-          <div>
+        <form onSubmit={handleSubmit} className=" flex gap-[10px] items-center flex-col w-full min-w-sm">
+          <div className="w-full">
             <label className="block mb-1">Category Name *</label>
             <input
               value={name}
@@ -44,7 +44,7 @@ const [name, setName] = useState("");
             />
           </div>
 
-          <div>
+          <div className="w-full">
             <label className="block mb-1">Category Value *</label>
             <input
               value={value}

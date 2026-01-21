@@ -78,7 +78,6 @@ const Login = () => {
           value="Log In"
           className="w-full bg-[#5C2E23] text-white py-2 rounded-md hover:bg-blue-700 transition"
         />
-        <p>Don't Have Account <Link className="underline text-[#5C2E23]" href="/register">Register</Link></p>
       </form>
       </div>
     </div>

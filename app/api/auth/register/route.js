@@ -39,28 +39,13 @@ export async function POST(req) {
       userRole: "admin",
     });
 
-    // 5️ Generate JWT
-    const token = signToken({
-      id: admin._id,
-      employeeId: admin.employeeId,
-      userRole: admin.userRole,
-      adminName:admin.adminName
-    });
 
-    // 6️ Send response with cookie
+
+    // 4 Send response with cookie
     const res = NextResponse.json(
       { message: "Admin registered successfully" },
       { status: 201 }
     );
-
-    res.cookies.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
     return res;
 
   } catch (error) {

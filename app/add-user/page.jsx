@@ -114,13 +114,6 @@ const Register = () => {
           >
             {loading ? "Registering..." : "Register"}
           </button>
-
-          <p className="text-center">
-            Already have an account?{" "}
-            <Link className="underline text-[#5C2E23]" href="/login">
-              Login
-            </Link>
-          </p>
         </form>
       </div>
     </div>

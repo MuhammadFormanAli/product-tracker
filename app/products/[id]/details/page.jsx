@@ -99,30 +99,56 @@ function Info({ label, value }) {
   );
 }
 
+
+
 function getOptions(product, router, close) {
   const go = (path) => () => {
     close(false);
     router.push(`/products/${product._id}/${path}`);
   };
 
-  if (product.status === "inStock")
+  /* ---------------- IN STOCK ---------------- */
+  if (product.status === "inStock") {
     return [
       { label: "Assign to User", action: go("assign") },
-      { label: "Send to Repair", action: go("repair") },
+
+      // Repair types
+      { label: "Repair (Internal)", action: go("repair/internal") },
+      { label: "Repair (Service Center)", action: go("repair/service-center") },
+      { label: "Repair (Warranty)", action: go("repair/warranty") },
+
       { label: "Mark as Damaged", action: go("damage") },
     ];
+  }
 
-  if (product.status === "inUse")
+  /* ---------------- IN USE ---------------- */
+  if (product.status === "inUse") {
     return [
       { label: "Withdraw from User", action: go("withdraw") },
-      { label: "Send to Repair", action: go("repair") },
-    ];
 
-  if (product.status === "inRepair")
-    return [
-      { label: "Return to Stock", action: go("return") },
-      { label: "Send to Supplier", action: go("supplier") },
+      // Send user device to repair
+      { label: "Repair (Internal)", action: go("repair/internal") },
+      { label: "Repair (Service Center)", action: go("repair/service-center") },
+      { label: "Repair (Warranty)", action: go("repair/warranty") },
     ];
+  }
+
+  /* ---------------- IN REPAIR ---------------- */
+  if (product.status === "inRepair") {
+    return [
+      // Success paths
+      { label: "Repair Successful → Return to User", action: go("repair/success/user") },
+      { label: "Repair Successful → Return to Stock", action: go("repair/success/stock") },
+
+      // Failure path
+      { label: "Repair Failed → Mark as Damaged", action: go("repair/failed") },
+    ];
+  }
+
+  /* ---------------- DAMAGED ---------------- */
+  if (product.status === "damage") {
+    return []; // final state
+  }
 
   return [];
 }

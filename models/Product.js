@@ -9,19 +9,59 @@ const AssignedUserSchema = new mongoose.Schema(
     phone: String,
     email: String,
   },
-  { _id: false }
+  { _id: false },
 );
+
+// const RepairInfoSchema = new mongoose.Schema(
+//   {
+//     serviceCenter: String,
+//     location: String,
+//     phone: String,
+//     email: String,
+//     carrierName: String,
+//     sentDate: Date.now
+//   },
+//   { _id: false },
+// );
+
+
+// new Repair Schema
+
 
 const RepairInfoSchema = new mongoose.Schema(
   {
+    repairType: {
+      type: String,
+      enum: ["INTERNAL", "SERVICE_CENTER", "WARRANTY"],
+      required: true,
+    },
+
     serviceCenter: String,
     location: String,
     phone: String,
     email: String,
     carrierName: String,
+    
+
+    issueDescription: String,
+
+    sentDate: { type: Date, required: true },
+    receivedDate: Date,
+
+    repairStatus: {
+      type: String,
+      enum: ["PENDING", "SUCCESS", "FAILED"],
+      default: "PENDING",
+    },
+
+    repairCost: Number,
+    remarks: String,
   },
   { _id: false }
 );
+
+
+
 
 const ProductSchema = new mongoose.Schema(
   {
@@ -45,7 +85,6 @@ const ProductSchema = new mongoose.Schema(
     warranty: String,
     remarks: String,
 
-    
     status: {
       type: String,
       enum: ["inStock", "inUse", "inRepair", "damage"],
@@ -54,8 +93,14 @@ const ProductSchema = new mongoose.Schema(
 
     assignedUser: AssignedUserSchema, // only for inUse
     repairInfo: RepairInfoSchema, // only for inRepair
+
+    
+    previousUsers: {
+      type: Array,
+      default: [],
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.models.Product ||

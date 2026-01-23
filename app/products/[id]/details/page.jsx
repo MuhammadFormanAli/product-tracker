@@ -145,7 +145,7 @@ function getOptions(product, router, close) {
     ];
   }
 
-  /* ---------------- DAMAGED ---------------- */
+  /* ------------- DAMAGED ------------- */
   if (product.status === "damage") {
     return []; // final state
   }

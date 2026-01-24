@@ -26,7 +26,6 @@ export default async function  RootLayout({ children }) {
 
   const loggedUser = await getAuthUser()
   
-
   return (
     <html lang="en">
       <Provider>

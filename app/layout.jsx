@@ -32,12 +32,12 @@ export default async function  RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background  text-gray-800`}
         >
-          {/* Root wrapper must be fixed height */}
+          {/* Root wrapper must be fixed height   */}
           <div className="flex h-screen overflow-hidden">
             {/* ========== Sidebar =========== */}
             <Sidebar />
 
-            {/* ================= Content Area ================= */}
+            {/* =============== Content Area ============== */}
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Navbar (fixed, no scroll) */}
               <div className="shrink-0">

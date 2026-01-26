@@ -17,7 +17,6 @@ const Login = () => {
 
   const onSubmit  = async (data) => {
 
- 
 
     const res = await axios.post('http://172.22.90.22:3000/api/auth/login', data)
     console.log(res)
@@ -72,6 +71,8 @@ const Login = () => {
             <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
           )}
         </div>
+
+
 
         <input
           type="submit"

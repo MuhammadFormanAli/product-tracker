@@ -72,8 +72,6 @@ const Login = () => {
           )}
         </div>
 
-
-
         <input
           type="submit"
           value="Log In"

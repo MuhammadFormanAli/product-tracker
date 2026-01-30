@@ -34,7 +34,7 @@ export async function POST(req) {
       carrierName,
     } = body;
 
-    // ✅ ONLY REQUIRED FIELDS
+    //  ONLY REQUIRED FIELDS
     if (!category || !serialNumber) {
       return NextResponse.json(
         { message: "Category and Serial Number are required" },
@@ -51,7 +51,7 @@ export async function POST(req) {
       );
     }
 
-    // 🟢 BASE PAYLOAD
+    //  BASE PAYLOAD
     const payload = {
       category,
       serialNumber,
@@ -63,7 +63,7 @@ export async function POST(req) {
       status, // default = inStock
     };
 
-    // 🟡 OPTIONAL inUse DATA
+    //  OPTIONAL inUse DATA
     if (status === "inUse") {
       payload.assignedUser = {
         userName,
@@ -75,7 +75,7 @@ export async function POST(req) {
       };
     }
 
-    // 🟡 OPTIONAL inRepair DATA
+    //  OPTIONAL inRepair DATA
     if (status === "inRepair") {
       payload.repairInfo = {
         serviceCenter,

@@ -12,22 +12,9 @@ const AssignedUserSchema = new mongoose.Schema(
   { _id: false },
 );
 
-// const RepairInfoSchema = new mongoose.Schema(
-//   {
-//     serviceCenter: String,
-//     location: String,
-//     phone: String,
-//     email: String,
-//     carrierName: String,
-//     sentDate: Date.now
-//   },
-//   { _id: false },
-// );
 
 
 // new Repair Schema
-
-
 const RepairInfoSchema = new mongoose.Schema(
   {
     repairType: {
@@ -35,18 +22,24 @@ const RepairInfoSchema = new mongoose.Schema(
       enum: ["INTERNAL", "SERVICE_CENTER", "WARRANTY"],
       required: true,
     },
-
+    
+// info for service center service
     serviceCenter: String,
     location: String,
     phone: String,
     email: String,
+
+
+    // carrier information
     carrierName: String,
+    carrierPhoneNumber: String,
     
 
     issueDescription: String,
 
-    sentDate: { type: Date, required: true },
+    sentDate:  Date,
     receivedDate: Date,
+    deliveryDate : Date,
 
     repairStatus: {
       type: String,
@@ -82,17 +75,23 @@ const ProductSchema = new mongoose.Schema(
     model: String,
 
     purchaseDate: Date,
-    warranty: String,
+    warranty: Number,
+
     remarks: String,
 
     status: {
       type: String,
       enum: ["inStock", "inUse", "inRepair", "damage"],
-      default: "inStock", // ✅ DEFAULT
+      default: "inStock", //  DEFAULT
     },
 
     assignedUser: AssignedUserSchema, // only for inUse
-    repairInfo: RepairInfoSchema, // only for inRepair
+
+    repairInfo: {
+      type: [RepairInfoSchema], //  array of repair objects
+      default: [],
+    },
+
 
     
     previousUsers: {

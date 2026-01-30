@@ -15,6 +15,7 @@ export default function ProductDetails() {
   useEffect(() => {
     axios.get(`/api/products/${id}`).then((res) => {
       setProduct(res.data);
+      console.log(res.data);
     });
   }, [id]);
 
@@ -65,9 +66,16 @@ export default function ProductDetails() {
       </div>
 
       {/* INFO */}
+
       <Info label="Serial Number" value={product.serialNumber} />
       <Info label="Category" value={product.category} />
       <Info label="Status" value={product.status} />
+      {product?.status === "inRepair" && (
+        <div className="flex gap-2" >
+          <p className="font-bold">Repair Type: </p>
+          <p className="text-red-500">{product?.repairInfo[product?.repairInfo?.length - 1]?.repairType} </p>
+        </div>
+      )}
 
       {/* ACTIONS */}
       <div className="mt-6 flex gap-4">
@@ -78,12 +86,12 @@ export default function ProductDetails() {
           Print Asset
         </button>
 
-        <button
+        {/* <button
           onClick={() => router.push(`/products/${id}/history`)}
           className="bg-blue-600 text-white px-4 py-2 rounded"
         >
           Print History
-        </button>
+        </button> */}
       </div>
     </div>
   );
@@ -99,24 +107,22 @@ function Info({ label, value }) {
   );
 }
 
-
-
 function getOptions(product, router, close) {
   const go = (path) => () => {
     close(false);
     router.push(`/products/${product._id}/${path}`);
   };
 
+  const lastRepair =
+    Array.isArray(product.repairInfo) && product.repairInfo.length > 0
+      ? product.repairInfo[product.repairInfo.length - 1]
+      : null;
+
   /* ---------------- IN STOCK ---------------- */
   if (product.status === "inStock") {
     return [
       { label: "Assign to User", action: go("assign") },
-
-      // Repair types
-      { label: "Repair (Internal)", action: go("repair/internal") },
-      { label: "Repair (Service Center)", action: go("repair/service-center") },
-      { label: "Repair (Warranty)", action: go("repair/warranty") },
-
+      { label: "Repair", action: go("repair") },
       { label: "Mark as Damaged", action: go("damage") },
     ];
   }
@@ -125,29 +131,36 @@ function getOptions(product, router, close) {
   if (product.status === "inUse") {
     return [
       { label: "Withdraw from User", action: go("withdraw") },
-
-      // Send user device to repair
-      { label: "Repair (Internal)", action: go("repair/internal") },
-      { label: "Repair (Service Center)", action: go("repair/service-center") },
-      { label: "Repair (Warranty)", action: go("repair/warranty") },
+      { label: "Repair", action: go("repair") },
     ];
   }
 
-  /* ---------------- IN REPAIR ---------------- */
-  if (product.status === "inRepair") {
+  /* ---------------- INTERNAL REPAIR ---------------- */
+  if (
+    product.status === "inRepair" &&
+    lastRepair?.repairType === "INTERNAL"
+  ) {
     return [
-      // Success paths
-      { label: "Repair Successful → Return to User", action: go("repair/success/user") },
-      { label: "Repair Successful → Return to Stock", action: go("repair/success/stock") },
-
-      // Failure path
-      { label: "Repair Failed → Mark as Damaged", action: go("repair/failed") },
+      { label: "Success", action: go("repair/internal/success") },
+      { label: "Send to Service Center", action: go("repair/internal/fail") },
+      { label: "Mark as Damaged", action: go("repair/internal/damage") },
     ];
   }
 
-  /* ------------- DAMAGED ------------- */
+  /* ---------------- SERVICE CENTER REPAIR ---------------- */
+  if (
+    product.status === "inRepair" &&
+    lastRepair?.repairType === "SERVICE_CENTER"
+  ) {
+    return [
+      { label: "Success", action: go("repair/service-center/success") },
+      { label: "Mark as Damaged", action: go("repair/service-center/fail") },
+    ];
+  }
+
+  /* ---------------- DAMAGED ---------------- */
   if (product.status === "damage") {
-    return []; // final state
+    return [];
   }
 
   return [];

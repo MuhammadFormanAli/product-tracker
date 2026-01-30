@@ -67,7 +67,7 @@ const AddProduct = () => {
             >
               <option value="">Select Category</option>
               {categories.map((c) => (
-                <option key={c.value} value={c.value}>
+                <option key={c.name} >
                   {c.name}
                 </option>
               ))}

@@ -14,7 +14,7 @@ export async function GET() {
     console.error("GET CATEGORY ERROR:", error);
     return NextResponse.json(
       { message: "Failed to fetch categories" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -25,31 +25,30 @@ export async function POST(req) {
     await dbConnect();
     const body = await req.json();
 
-    const { name, value } = body;
+    const { name } = body;
 
-    //  Validation
-    if (!name || !value) {
+    // Validation
+    if (!name?.trim()) {
       return NextResponse.json(
-        { message: "Name and Value are required" },
-        { status: 400 }
+        { message: "Name is required" },
+        { status: 400 },
       );
     }
 
     // Duplicate check
     const exists = await Category.findOne({
-      $or: [{ name }, { value }],
+      name: { $regex: `^${name.trim()}$`, $options: "i" },
     });
 
     if (exists) {
       return NextResponse.json(
         { message: "Category already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     const category = await Category.create({
-      name,
-      value,
+      name: name.trim(),
     });
 
     return NextResponse.json(
@@ -57,16 +56,14 @@ export async function POST(req) {
         message: "Category added successfully",
         category,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("ADD CATEGORY ERROR:", error);
 
     return NextResponse.json(
       { message: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-
-

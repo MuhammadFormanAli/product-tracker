@@ -3,7 +3,8 @@
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
+
 
 const AllCategory = () => {
 
@@ -54,7 +55,6 @@ const AllCategory = () => {
           <thead className="bg-gray-100">
             <tr>
               <th className="p-2 border">Name</th>
-              <th className="p-2 border">Value</th>
               <th className="p-2 border">Action</th>
             </tr>
           </thead>
@@ -62,7 +62,6 @@ const AllCategory = () => {
             {categories.map((c) => (
               <tr key={c._id}>
                 <td className="p-2 border">{c.name}</td>
-                <td className="p-2 border">{c.value}</td>
                 <td className="p-2 border flex gap-3">
                   <Link
                     href={`/category/edit/${c._id}`}

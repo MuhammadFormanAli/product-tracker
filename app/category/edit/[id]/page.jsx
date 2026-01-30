@@ -4,7 +4,8 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
+
 
 export default function EditCategory() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ export default function EditCategory() {
     },
   });
 
-  // ✅ Fetch single category
+  // Fetch single category
   const { isLoading } = useQuery({
     queryKey: ["category", id],
     enabled: !!id,
@@ -37,14 +38,14 @@ export default function EditCategory() {
     },
   });
 
-  // ✅ Update category
+  //  Update category
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
       return axios.put(`/api/category/${id}`, data);
     },
     onSuccess: () => {
-      toast.success("Category updated");
       router.push("/category");
+      toast.success("Category updated");
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || "Update failed");
@@ -79,21 +80,6 @@ export default function EditCategory() {
             />
             {errors.name && (
               <p className="error">{errors.name.message}</p>
-            )}
-          </div>
-
-          {/* Category Value */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Category Value
-            </label>
-            <input
-              {...register("value", { required: "Category value is required" })}
-              className="input"
-              placeholder="Enter category value"
-            />
-            {errors.value && (
-              <p className="error">{errors.value.message}</p>
             )}
           </div>
 

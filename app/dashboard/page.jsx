@@ -11,6 +11,8 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import Link from "next/link";
+import Loading from "../loading";
 
 ChartJS.register(
   ArcElement,
@@ -55,7 +57,7 @@ export default function DashboardPage() {
       .then(setData);
   }, []);
 
-  if (!data) return <p className="p-6">Loading...</p>;
+  if (!data) return <Loading />;
 
   const filteredProducts = filter
     ? data.products.filter((p) => p.status === filter)
@@ -97,33 +99,39 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6 bg-gray-100 min-h-screen">
       {/* KPI */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <KPI
-          label="Total"
-          value={data.kpis.total}
-          onClick={() => setFilter(null)}
-        />
-        <KPI
-          label="In Stock"
-          value={data.kpis.inStock}
-          onClick={() => setFilter("inStock")}
-        />
-        <KPI
-          label="In Use"
-          value={data.kpis.inUse}
-          onClick={() => setFilter("inUse")}
-        />
-        <KPI
-          label="In Repair"
-          value={data.kpis.inRepair}
-          onClick={() => setFilter("inRepair")}
-        />
-        <KPI
-          label="Damaged"
-          value={data.kpis.damage}
-          onClick={() => setFilter("damage")}
-        />
-      </div>
+      {/* KPI */}
+<div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+  <KPI
+    label="Total"
+    value={data?.kpis?.total ?? 0}
+    color="bg-gray-100 text-gray-800"
+    onClick={() => setFilter(null)}
+  />
+  <KPI
+    label="In Stock"
+    value={data?.kpis?.inStock ?? 0}
+    color="bg-green-100 text-green-700"
+    onClick={() => setFilter("inStock")}
+  />
+  <KPI
+    label="In Use"
+    value={data?.kpis?.inUse ?? 0}
+    color="bg-blue-100 text-blue-700"
+    onClick={() => setFilter("inUse")}
+  />
+  <KPI
+    label="In Repair"
+    value={data?.kpis?.inRepair ?? 0}
+    color="bg-yellow-100 text-yellow-700"
+    onClick={() => setFilter("inRepair")}
+  />
+  <KPI
+    label="Damaged"
+    value={data?.kpis?.damage ?? 0}
+    color="bg-red-100 text-red-700"
+    onClick={() => setFilter("damage")}
+  />
+</div>
 
       {/* Charts */}
       <div className="grid md:grid-cols-2 gap-6">
@@ -154,14 +162,30 @@ export default function DashboardPage() {
 
       {/* SLA */}
       <Card title="🚨 SLA Breaches">
-        {data.slaBreaches.length === 0 ? (
+        {data?.slaBreaches?.length === 0 ? (
           <p className="text-sm text-gray-500">No SLA breaches 🎉</p>
         ) : (
-          data.slaBreaches.map((b) => (
-            <p key={b.serialNumber} className="text-red-600 text-sm">
-              {b.serialNumber} — {b.repairType} — {b.days} days
-            </p>
-          ))
+          <div className="space-y-2 max-h-56 overflow-y-auto">
+            {data?.slaBreaches?.map((b, i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center p-2 border rounded hover:bg-red-50 transition"
+              >
+                <div>
+                  <p className="font-semibold text-red-700">
+                    {b?.serialNumber ?? "Unknown Asset"}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    {b?.repairType ?? "-"} — Assigned to:{" "}
+                    {b?.assignedUser?.userName ?? "-"}
+                  </p>
+                </div>
+                <span className="text-sm font-medium text-red-600">
+                  {b?.days ?? 0} day{b?.days > 1 ? "s" : ""}
+                </span>
+              </div>
+            ))}
+          </div>
         )}
       </Card>
 
@@ -192,127 +216,115 @@ export default function DashboardPage() {
         </table>
       </Card>
 
+      {/* Product Table */}
+      <div className="bg-white rounded-lg shadow border">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-100 text-sm text-gray-600">
+              <tr>
+                <th className="p-3 border text-left">Serial No</th>
+                <th className="p-3 border text-left">Category</th>
+                <th className="p-3 border text-left">Status</th>
+                <th className="p-3 border text-center">Actions</th>
+              </tr>
+            </thead>
 
+            <tbody className="text-sm">
+              {paginatedProducts.map((p) => (
+                <tr key={p._id} className="hover:bg-gray-50 transition">
+                  <td className="p-3 border font-medium">{p.serialNumber}</td>
 
-{/* Product Table */}
-<div className="bg-white rounded-lg shadow border">
+                  <td className="p-3 border">{p.category}</td>
 
-  <div className="overflow-x-auto">
-    <table className="w-full border-collapse">
-      <thead className="bg-gray-100 text-sm text-gray-600">
-        <tr>
-          <th className="p-3 border text-left">Serial No</th>
-          <th className="p-3 border text-left">Category</th>
-          <th className="p-3 border text-left">Status</th>
-          <th className="p-3 border text-center">Actions</th>
-        </tr>
-      </thead>
-
-      <tbody className="text-sm">
-        {paginatedProducts.map((p) => (
-          <tr
-            key={p._id}
-            className="hover:bg-gray-50 transition"
-          >
-            <td className="p-3 border font-medium">
-              {p.serialNumber}
-            </td>
-
-            <td className="p-3 border">
-              {p.category}
-            </td>
-
-            {/* Status Badge */}
-            <td className="p-3 border">
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-semibold
+                  {/* Status Badge */}
+                  <td className="p-3 border">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold
                   ${
                     p.status === "inStock"
                       ? "bg-green-100 text-green-700"
                       : p.status === "inUse"
-                      ? "bg-blue-100 text-blue-700"
-                      : p.status === "inRepair"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
+                        ? "bg-blue-100 text-blue-700"
+                        : p.status === "inRepair"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
                   }
                 `}
-              >
-                {p.status}
-              </span>
-            </td>
+                    >
+                      {p.status}
+                    </span>
+                  </td>
 
-            
-
-            {/* Actions */}
-            <td className="p-3 border text-center">
-              <div className="flex justify-center gap-2">
-                <button
-                  onClick={() => handleViewDetails(p._id)}
-                  className="px-3 py-1.5 text-xs font-medium rounded
+                  {/* Actions */}
+                  <td className="p-3 border text-center">
+                    <div className="flex justify-center gap-2">
+                      <Link
+                        href={`products/${p._id}/details`}
+                        className="px-3 py-1.5 text-xs font-medium rounded
                              bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Details
-                </button>
+                      >
+                        Details
+                      </Link>
 
-                <button
-                  onClick={() => handleDelete(p._id)}
-                  className="px-3 py-1.5 text-xs font-medium rounded
+                      <button
+                        //   onClick={() => handleDelete(p._id)}
+                        className="px-3 py-1.5 text-xs font-medium rounded
                              bg-red-600 text-white hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-  {/* Pagination */}
-  <div className="flex justify-center items-center gap-4 px-4 py-3 border-t bg-gray-50">
-    <button
-      disabled={page === 1}
-      onClick={() => setPage((p) => p - 1)}
-      className="px-4 py-1.5 border rounded text-sm
+        {/* Pagination */}
+        <div className="flex justify-center items-center gap-4 px-4 py-3 border-t bg-gray-50">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-4 py-1.5 border rounded text-sm
                  hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      ← Prev
-    </button>
+          >
+            ← Prev
+          </button>
 
-    <span className="text-sm text-gray-600">
-      Page <span className="font-medium">{page}</span> of{" "}
-      <span className="font-medium">{totalPages}</span>
-    </span>
+          <span className="text-sm text-gray-600">
+            Page <span className="font-medium">{page}</span> of{" "}
+            <span className="font-medium">{totalPages}</span>
+          </span>
 
-    <button
-      disabled={page === totalPages}
-      onClick={() => setPage((p) => p + 1)}
-      className="px-4 py-1.5 border rounded text-sm
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-4 py-1.5 border rounded text-sm
                  hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      Next →
-    </button>
-  </div>
-</div>
-
-
-
-
+          >
+            Next →
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
 
 /* ---------------- COMPONENTS ---------------- */
 
-function KPI({ label, value, onClick }) {
+function KPI({ label, value, color = "bg-white text-black", onClick }) {
   return (
     <div
       onClick={onClick}
-      className="bg-white p-4 rounded shadow cursor-pointer hover:ring"
+      className={`p-4 rounded shadow cursor-pointer hover:ring transition ${color}`}
     >
-      <p className="text-sm">{label}</p>
-      <p className="text-2xl font-bold">{value}</p>
+      <p className="text-sm font-medium">{label}</p>
+      <div className="flex items-center gap-2 mt-1">
+        <p className="text-2xl font-bold">{value}</p>
+        {/* Optional colored bar indicator */}
+        <div className={`flex-1 h-1 rounded ${color.split(" ")[0]}`}></div>
+      </div>
     </div>
   );
 }

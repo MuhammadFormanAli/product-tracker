@@ -64,6 +64,11 @@ const ProductSchema = new mongoose.Schema(
       index: true,
     },
 
+    subCategory: {
+      type: String,
+      index: true,
+    },
+
     serialNumber: {
       type: String,
       required: true,

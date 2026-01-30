@@ -30,18 +30,31 @@ export async function PUT(req, { params }) {
     await dbConnect();
     const body = await req.json();
 
-    const { name, value } = body;
+    const { name } = body;
 
-    if (!name || !value) {
+    if (!name ) {
       return NextResponse.json(
-        { message: "Name and value are required" },
+        { message: "Name is required" },
         { status: 400 }
       );
     }
 
+// Duplicate check
+    const exists = await Category.findOne({
+      name: { $regex: `^${name.trim()}$`, $options: "i" },
+    });
+
+    if (exists) {
+      return NextResponse.json(
+        { message: "Category already exists" },
+        { status: 409 },
+      );
+    }
+
+
     const updated = await Category.findByIdAndUpdate(
       params.id,
-      { name, value },
+      { name },
       { new: true }
     );
 

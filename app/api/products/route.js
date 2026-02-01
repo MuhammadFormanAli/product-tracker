@@ -42,7 +42,7 @@ export async function POST(req) {
       );
     }
 
-    // 🔴 DUPLICATE SERIAL CHECK
+    //  DUPLICATE SERIAL CHECK
     const exists = await Product.findOne({ serialNumber });
     if (exists) {
       return NextResponse.json(

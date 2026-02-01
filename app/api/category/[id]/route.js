@@ -4,9 +4,11 @@ import { dbConnect } from "@/lib/mongoose";
 
 //  GET SINGLE CATEGORY
 export async function GET(req, { params }) {
+const {id }= await  params
   try {
     await dbConnect();
-    const category = await Category.findById(params.id);
+    
+    const category = await Category.findById(id);
 
     if (!category) {
       return NextResponse.json(

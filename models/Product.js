@@ -12,8 +12,6 @@ const AssignedUserSchema = new mongoose.Schema(
   { _id: false },
 );
 
-
-
 // new Repair Schema
 const RepairInfoSchema = new mongoose.Schema(
   {
@@ -22,24 +20,22 @@ const RepairInfoSchema = new mongoose.Schema(
       enum: ["INTERNAL", "SERVICE_CENTER", "WARRANTY"],
       required: true,
     },
-    
-// info for service center service
+
+    // info for service center service
     serviceCenter: String,
     location: String,
     phone: String,
     email: String,
 
-
     // carrier information
     carrierName: String,
     carrierPhoneNumber: String,
-    
 
     issueDescription: String,
 
-    sentDate:  Date,
+    sentDate: Date,
     receivedDate: Date,
-    deliveryDate : Date,
+    deliveryDate: Date,
 
     repairStatus: {
       type: String,
@@ -50,11 +46,8 @@ const RepairInfoSchema = new mongoose.Schema(
     repairCost: Number,
     remarks: String,
   },
-  { _id: false }
+  { _id: false },
 );
-
-
-
 
 const ProductSchema = new mongoose.Schema(
   {
@@ -97,13 +90,20 @@ const ProductSchema = new mongoose.Schema(
       default: [],
     },
 
-
-    
     previousUsers: {
       type: Array,
       default: [],
     },
+
+
+    addedBy: {
+      type: Object,
+      default: {},
+    },
+
+    
   },
+
   { timestamps: true },
 );
 

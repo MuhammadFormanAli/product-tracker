@@ -1,15 +1,32 @@
 import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 import { dbConnect } from "@/lib/mongoose";
+import { getAuthUser } from "@/lib/auth";
+import { use } from "react";
 
 /* ================= ADD PRODUCT ================= */
 export async function POST(req) {
+  const user = await getAuthUser();
+
   try {
     await dbConnect();
     const body = await req.json();
+    console.log("user info from add product api", user?.adminName, body);
+
+    if (!user.adminName) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const addedBy = {
+      adminName: user.adminName,
+      employeeId: user.employeeId,
+      userRole: user.userRole,
+      adminId:user.id
+    };
 
     const {
       category,
+      subCategory,
       serialNumber,
       brand,
       model,
@@ -38,7 +55,7 @@ export async function POST(req) {
     if (!category || !serialNumber) {
       return NextResponse.json(
         { message: "Category and Serial Number are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,13 +64,14 @@ export async function POST(req) {
     if (exists) {
       return NextResponse.json(
         { message: "Serial number already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     //  BASE PAYLOAD
     const payload = {
       category,
+      subCategory,
       serialNumber,
       brand,
       model,
@@ -61,6 +79,7 @@ export async function POST(req) {
       warranty,
       remarks,
       status, // default = inStock
+      addedBy,
     };
 
     //  OPTIONAL inUse DATA
@@ -93,18 +112,17 @@ export async function POST(req) {
         message: "Product added successfully",
         product,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("ADD PRODUCT ERROR:", error);
 
     return NextResponse.json(
       { message: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-
 
 /* ================= GET PRODUCTS ================= */
 export async function GET(req) {
@@ -114,7 +132,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
 
     const page = Number(searchParams.get("page")) || 1;
-    const limit = 10;
+    const limit = 20;
     const skip = (page - 1) * limit;
 
     const search = searchParams.get("search") || "";
@@ -151,7 +169,7 @@ export async function GET(req) {
   } catch (error) {
     return NextResponse.json(
       { message: "Failed to fetch products" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

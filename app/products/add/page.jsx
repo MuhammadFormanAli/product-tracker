@@ -6,45 +6,68 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-const AddProduct = () => {
+const   AddProduct = () => {
   const router = useRouter();
   const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [brands, setBrands] = useState([]);
 
+ 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     shouldUnregister: true,
-    defaultValues: {
-      status: "inStock",
-    },
+    defaultValues: { status: "inStock" },
   });
 
+  const selectedCategory = watch("category");
   const status = watch("status");
   const isInUse = status === "inUse";
 
-  // const isInRepair = status === "inRepair";
+  /* ---------- SUBCATEGORY HANDLER ---------- */
+  useEffect(() => {
+    const cat = categories.find((c) => c.name === selectedCategory);
 
+    if (cat && cat.subCategories?.length > 0) {
+      setSubCategories(cat.subCategories);
+    } else {
+      setSubCategories([]);
+      setValue("subCategory", ""); // reset
+    }
+  }, [selectedCategory, categories, setValue]);
+
+  /* ---------- SUBMIT ---------- */
   const onSubmit = async (data) => {
     try {
       setLoading(true);
       await axios.post("/api/products", data);
       toast.success("Product added successfully");
       router.push("/");
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
+  /* ---------- FETCH CATEGORIES ---------- */
   useEffect(() => {
     fetch("/api/category")
       .then((res) => res.json())
       .then(setCategories);
+  }, []);
+
+
+  /* ---------- fetch brands ---------- */
+  useEffect(() => {
+    fetch("/api/brand")
+      .then((res) => res.json())
+      .then(setBrands);
   }, []);
 
   return (
@@ -59,6 +82,8 @@ const AddProduct = () => {
       >
         {/* BASIC INFO */}
         <div className="grid grid-cols-2 gap-4 border p-4 rounded">
+          
+          {/* CATEGORY */}
           <div>
             <label className="label">Category *</label>
             <select
@@ -67,7 +92,7 @@ const AddProduct = () => {
             >
               <option value="">Select Category</option>
               {categories.map((c) => (
-                <option key={c.name} >
+                <option key={c._id} value={c.name}>
                   {c.name}
                 </option>
               ))}
@@ -77,6 +102,32 @@ const AddProduct = () => {
             )}
           </div>
 
+          {/* SUBCATEGORY */}
+          <div>
+            <label className="label">Subcategory</label>
+            <select
+              {...register("subCategory")}
+              disabled={subCategories.length === 0}
+              className={`input ${
+                subCategories.length === 0
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : ""
+              }`}
+            >
+              <option value="">
+                {subCategories.length === 0
+                  ? "No subcategory available"
+                  : "Select Subcategory"}
+              </option>
+              {subCategories.map((sc) => (
+                <option key={sc._id} value={sc.name}>
+                  {sc.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* SERIAL */}
           <div>
             <label className="label">Serial Number *</label>
             <input
@@ -90,10 +141,26 @@ const AddProduct = () => {
             )}
           </div>
 
-          <div>
-            <label className="label">Brand</label>
-            <input {...register("brand")} className="input" />
-          </div>
+          {/* BRAND */}
+<div>
+  <label className="label">Brand *</label>
+  <select
+    {...register("brand", { required: "Brand is required" })}
+    className="input"
+  >
+    <option value="">Select Brand</option>
+    {brands.map((b) => (
+      <option key={b._id} value={b.name}>
+        {b.name}
+      </option>
+    ))}
+  </select>
+
+  {errors.brand && (
+    <p className="error">{errors.brand.message}</p>
+  )}
+</div>
+
 
           <div>
             <label className="label">Model</label>
@@ -102,11 +169,7 @@ const AddProduct = () => {
 
           <div>
             <label className="label">Purchase Date</label>
-            <input
-              type="date"
-              {...register("purchaseDate")}
-              className="input"
-            />
+            <input type="date" {...register("purchaseDate")} className="input" />
           </div>
 
           <div>
@@ -125,7 +188,7 @@ const AddProduct = () => {
           {["inStock", "damage", "inUse"].map((s) => (
             <label key={s} className="flex gap-2 items-center capitalize">
               <input type="radio" value={s} {...register("status")} />
-              {s.replace(/([A-Z])/g, " $1")}
+              {s}
             </label>
           ))}
         </div>
@@ -133,98 +196,25 @@ const AddProduct = () => {
         {/* IN USE */}
         {isInUse && (
           <div className="grid grid-cols-2 gap-4 border p-4 rounded">
-            <div>
-              <label className="label">User Name </label>
-              <input
-                {...register("userName")}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Employee ID </label>
-              <input
-                {...register("employeeId")}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Designation </label>
-              <input
-                {...register("designation")}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Location </label>
-              <input
-                {...register("location")}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Phone </label>
-              <input
-                {...register("phone")}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Email</label>
-              <input type="email" {...register("mail")} className="input" />
-            </div>
+            {[
+              ["userName", "User Name"],
+              ["employeeId", "Employee ID"],
+              ["designation", "Designation"],
+              ["location", "Location"],
+              ["phone", "Phone"],
+              ["mail", "Email"],
+            ].map(([name, label]) => (
+              <div key={name}>
+                <label className="label">{label}</label>
+                <input
+                  {...register(name)}
+                  className="input"
+                  type={name === "mail" ? "email" : "text"}
+                />
+              </div>
+            ))}
           </div>
         )}
-
-        {/* IN REPAIR */}
-        {/* {isInRepair && (
-          <div className="grid grid-cols-2 gap-4 border p-4 rounded">
-            <div>
-              <label className="label">Service Center *</label>
-              <input
-                {...register("serviceCenter", { required: true })}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Service Center Location *</label>
-              <input
-                {...register("serviceCenterLocation", { required: true })}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Service Center Phone *</label>
-              <input
-                {...register("serviceCenterPhone", { required: true })}
-                className="input"
-              />
-            </div>
-
-            <div>
-              <label className="label">Service Center Email *</label>
-              <input
-                type="email"
-                {...register("serviceCenterEmail", { required: true })}
-                className="input"
-              />
-            </div>
-
-            <div className="col-span-2">
-              <label className="label">Carrier Name *</label>
-              <input
-                {...register("carrierName", { required: true })}
-                className="input"
-              />
-            </div>
-          </div>
-        )} */}
 
         <button
           disabled={loading}
@@ -234,6 +224,7 @@ const AddProduct = () => {
         </button>
       </form>
 
+      {/* TAILWIND HELPERS */}
       <style jsx>{`
         .input {
           width: 100%;
@@ -242,22 +233,18 @@ const AddProduct = () => {
           border-radius: 0.375rem;
         }
         .label {
-          display: block;
           font-size: 0.875rem;
           font-weight: 500;
           margin-bottom: 0.25rem;
+          display: block;
         }
         .error {
           color: #ef4444;
           font-size: 0.75rem;
         }
       `}</style>
-
-
     </div>
   );
 };
-
-
 
 export default AddProduct;

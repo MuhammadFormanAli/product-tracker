@@ -54,7 +54,7 @@ const Register = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="bg-[#ffffff10] p-8 rounded-lg shadow-md w-full max-w-sm space-y-6 backdrop-blur-2xl text-white"
         >
-          <h2 className="text-2xl font-bold text-center">Register</h2>
+          <h2 className="text-2xl font-bold text-center">Create New User</h2>
 
           {/* Name */}
           <div>
@@ -106,13 +106,15 @@ const Register = () => {
               </p>
             )}
           </div>
+ 
 
+ 
           <button
             disabled={loading}
             type="submit"
             className="w-full bg-[#5C2E23] py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? "Creating..." : "Create"}
           </button>
         </form>
       </div>

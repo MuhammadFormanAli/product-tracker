@@ -106,9 +106,6 @@ const Register = () => {
               </p>
             )}
           </div>
- 
-
- 
           <button
             disabled={loading}
             type="submit"

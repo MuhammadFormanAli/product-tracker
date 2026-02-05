@@ -19,8 +19,6 @@ return NextResponse.json(adminUser)
 }
 
 
-
-
 export async function POST(request) {
 try {
 await dbConnect();

@@ -31,7 +31,6 @@ if (!body.adminName || !body.employeeId || !body.password) {
 return new Response(JSON.stringify({ error: 'all fields are required' }), { status: 400 });
 }
 
-
 const created = await AdminUser.create(body);
 console.log('console after create',created)
 return new Response(JSON.stringify(created), { status: 201 });
@@ -40,5 +39,3 @@ console.error(err);
 return new Response(JSON.stringify({ error: err.message }), { status: 500 });
 }
 }
-
-

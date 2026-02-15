@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
+import AssignUserDialog from "@/app/components/AssignUserDialog";
+import WithdrawUserDialog from "@/app/components/WithdrawUserDialog";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -10,12 +12,15 @@ export default function ProductDetails() {
 
   const [product, setProduct] = useState(null);
   const [open, setOpen] = useState(false);
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+
   const menuRef = useRef(null);
 
   useEffect(() => {
     axios.get(`/api/products/${id}`).then((res) => {
       setProduct(res.data);
-      console.log('products details',res.data)
+      console.log("products details", res.data);
     });
   }, [id]);
 
@@ -32,7 +37,13 @@ export default function ProductDetails() {
 
   if (!product) return null;
 
-  const options = getOptions(product, router, setOpen);
+  const options = getOptions(
+    product,
+    router,
+    setOpen,
+    setAssignOpen,
+    setWithdrawOpen,
+  );
 
   const lastRepair =
     Array.isArray(product.repairInfo) && product.repairInfo.length
@@ -88,13 +99,15 @@ export default function ProductDetails() {
 
       {/* OVERVIEW */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
         {/* Asset Info */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="font-semibold mb-4">📦 Asset Information</h2>
 
           <Info label="Category" value={product.category} />
-          <Info label="Purchase Date" value={formatDate(product.purchaseDate)} />
+          <Info
+            label="Purchase Date"
+            value={formatDate(product.purchaseDate)}
+          />
           <Info label="Warranty (months)" value={product.warranty} />
           <Info label="Remarks" value={product.remarks} />
         </div>
@@ -106,8 +119,14 @@ export default function ProductDetails() {
           {product.assignedUser ? (
             <>
               <Info label="Name" value={product.assignedUser.userName} />
-              <Info label="Employee ID" value={product.assignedUser.employeeId} />
-              <Info label="Designation" value={product.assignedUser.designation} />
+              <Info
+                label="Employee ID"
+                value={product.assignedUser.employeeId}
+              />
+              <Info
+                label="Designation"
+                value={product.assignedUser.designation}
+              />
               <Info label="Location" value={product.assignedUser.location} />
               <Info label="Phone" value={product.assignedUser.phone} />
               <Info label="Email" value={product.assignedUser.email} />
@@ -129,7 +148,10 @@ export default function ProductDetails() {
             <Info label="Service Center" value={lastRepair.serviceCenter} />
             <Info label="Carrier" value={lastRepair.carrierName} />
             <Info label="Sent Date" value={formatDate(lastRepair.sentDate)} />
-            <Info label="Delivery Date" value={formatDate(lastRepair.deliveryDate)} />
+            <Info
+              label="Delivery Date"
+              value={formatDate(lastRepair.deliveryDate)}
+            />
             <Info label="Repair Cost" value={lastRepair.repairCost} />
           </div>
         </div>
@@ -149,8 +171,8 @@ export default function ProductDetails() {
                       r.repairStatus === "SUCCESS"
                         ? "bg-green-500"
                         : r.repairStatus === "FAILED"
-                        ? "bg-red-500"
-                        : "bg-yellow-500"
+                          ? "bg-red-500"
+                          : "bg-yellow-500"
                     }`}
                 />
                 <p className="font-medium text-sm">
@@ -176,6 +198,22 @@ export default function ProductDetails() {
           Print Asset
         </button>
       </div>
+    
+    
+
+        <AssignUserDialog
+          id={product._id}
+          open={assignOpen}
+          setOpen={setAssignOpen}
+        />
+        <WithdrawUserDialog
+          id={product._id}
+          open={withdrawOpen}
+          setOpen={setWithdrawOpen}
+        />
+
+        
+    
     </div>
   );
 }
@@ -200,7 +238,9 @@ function StatusBadge({ status }) {
   };
 
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${map[status]}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-semibold ${map[status]}`}
+    >
       {status}
     </span>
   );
@@ -211,9 +251,7 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString();
 }
 
-
-
-function getOptions(product, router, close) {
+function getOptions(product, router, close, setAssignOpen, setWithdrawOpen) {
   const go = (path) => () => {
     close(false);
     router.push(`/products/${product._id}/${path}`);
@@ -227,7 +265,13 @@ function getOptions(product, router, close) {
   /* ---------------- IN STOCK ---------------- */
   if (product.status === "inStock") {
     return [
-      { label: "Assign to User", action: go("assign") },
+      {
+        label: "Assign to User",
+        action: () => {
+          close(false);
+          setAssignOpen(true);
+        },
+      },
       { label: "Repair", action: go("repair") },
       { label: "Mark as Damaged", action: go("damage") },
     ];
@@ -236,16 +280,19 @@ function getOptions(product, router, close) {
   /* ---------------- IN USE ---------------- */
   if (product.status === "inUse") {
     return [
-      { label: "Withdraw from User", action: go("withdraw") },
+      {
+        label: "Withdraw from User",
+        action: () => {
+          close(false);
+          setWithdrawOpen(true);
+        },
+      },
       { label: "Repair", action: go("repair") },
     ];
   }
 
   /* ---------------- INTERNAL REPAIR ---------------- */
-  if (
-    product.status === "inRepair" &&
-    lastRepair?.repairType === "INTERNAL"
-  ) {
+  if (product.status === "inRepair" && lastRepair?.repairType === "INTERNAL") {
     return [
       { label: "Success", action: go("repair/internal/success") },
       { label: "Send to Service Center", action: go("repair/internal/fail") },

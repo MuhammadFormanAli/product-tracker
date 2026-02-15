@@ -1,20 +1,41 @@
-import { NextResponse } from "next/server";
-import Product from "@/models/Product";
-import { logActivity } from "@/lib/logActivity";
 import { dbConnect } from "@/lib/mongoose";
+import Product from "@/models/Product";
+import { NextResponse } from "next/server";
 
-export async function POST(req, { params }) {
-  await dbConnect();
 
-  const product = await Product.findById(params.id);
-  product.status = "inStock";
-  product.assignedUser = undefined;
-  await product.save();
+export async function PUT(req, { params }) {
+  try {
+    await dbConnect();
 
-  await logActivity({
-    productId: product._id,
-    action: "WITHDRAWN_FROM_USER",
-  });
+    const product = await Product.findById(params.id);
 
-  return NextResponse.json({ success: true });
+    if (!product) {
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
+    }
+
+    if (!product.assignedUser) {
+      return NextResponse.json(
+        { message: "No assigned user" },
+        { status: 400 }
+      );
+    }
+
+    product.previousUsers.push(product.assignedUser);
+    product.assignedUser = null;
+    product.status = "inStock";
+
+    await product.save();
+
+    return NextResponse.json({
+      message: "User withdrawn successfully",
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Server error" },
+      { status: 500 }
+    );
+  }
 }

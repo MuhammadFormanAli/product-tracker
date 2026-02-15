@@ -18,7 +18,7 @@ const Login = () => {
   const onSubmit  = async (data) => {
 
 
-    const res = await axios.post('http://172.22.90.22:3000/api/auth/login', data)
+    const res = await axios.post('/api/auth/login', data)
     console.log(res)
     if(res?.data){
       router.push('/dashboard')

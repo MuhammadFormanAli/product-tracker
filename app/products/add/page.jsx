@@ -2,18 +2,14 @@
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
-const   AddProduct = () => {
+const AddProduct = () => {
   const router = useRouter();
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [brands, setBrands] = useState([]);
 
- 
   const {
     register,
     handleSubmit,
@@ -29,46 +25,50 @@ const   AddProduct = () => {
   const status = watch("status");
   const isInUse = status === "inUse";
 
-  /* ---------- SUBCATEGORY HANDLER ---------- */
-  useEffect(() => {
-    const cat = categories.find((c) => c.name === selectedCategory);
+  /* ================= FETCH CATEGORIES ================= */
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/category");
+      return data;
+    },
+  });
 
-    if (cat && cat.subCategories?.length > 0) {
-      setSubCategories(cat.subCategories);
-    } else {
-      setSubCategories([]);
-      setValue("subCategory", ""); // reset
-    }
-  }, [selectedCategory, categories, setValue]);
+  /* ================= FETCH BRANDS ================= */
+  const { data: brands = [] } = useQuery({
+    queryKey: ["brands"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/brand");
+      return data;
+    },
+  });
 
-  /* ---------- SUBMIT ---------- */
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      await axios.post("/api/products", data);
+  /* ================= HANDLE SUBCATEGORY ================= */
+  const subCategories =
+    categories.find((c) => c.name === selectedCategory)?.subCategories || [];
+
+  if (!subCategories.length) {
+    setValue("subCategory", "");
+  }
+
+  /* ================= ADD PRODUCT MUTATION ================= */
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData) => {
+      const { data } = await axios.post("/api/products", formData);
+      return data;
+    },
+    onSuccess: () => {
       toast.success("Product added successfully");
       router.push("/");
-    } catch {
+    },
+    onError: () => {
       toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = (data) => {
+    mutate(data);
   };
-
-  /* ---------- FETCH CATEGORIES ---------- */
-  useEffect(() => {
-    fetch("/api/category")
-      .then((res) => res.json())
-      .then(setCategories);
-  }, []);
-
-
-  /* ---------- fetch brands ---------- */
-  useEffect(() => {
-    fetch("/api/brand")
-      .then((res) => res.json())
-      .then(setBrands);
-  }, []);
 
   return (
     <div className="bg-gray-100 p-6">
@@ -82,7 +82,7 @@ const   AddProduct = () => {
       >
         {/* BASIC INFO */}
         <div className="grid grid-cols-2 gap-4 border p-4 rounded">
-          
+
           {/* CATEGORY */}
           <div>
             <label className="label">Category *</label>
@@ -107,15 +107,15 @@ const   AddProduct = () => {
             <label className="label">Subcategory</label>
             <select
               {...register("subCategory")}
-              disabled={subCategories.length === 0}
+              disabled={!subCategories.length}
               className={`input ${
-                subCategories.length === 0
+                !subCategories.length
                   ? "bg-gray-100 cursor-not-allowed"
                   : ""
               }`}
             >
               <option value="">
-                {subCategories.length === 0
+                {!subCategories.length
                   ? "No subcategory available"
                   : "Select Subcategory"}
               </option>
@@ -142,25 +142,23 @@ const   AddProduct = () => {
           </div>
 
           {/* BRAND */}
-<div>
-  <label className="label">Brand *</label>
-  <select
-    {...register("brand", { required: "Brand is required" })}
-    className="input"
-  >
-    <option value="">Select Brand</option>
-    {brands.map((b) => (
-      <option key={b._id} value={b.name}>
-        {b.name}
-      </option>
-    ))}
-  </select>
-
-  {errors.brand && (
-    <p className="error">{errors.brand.message}</p>
-  )}
-</div>
-
+          <div>
+            <label className="label">Brand *</label>
+            <select
+              {...register("brand", { required: "Brand is required" })}
+              className="input"
+            >
+              <option value="">Select Brand</option>
+              {brands.map((b) => (
+                <option key={b._id} value={b.name}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+            {errors.brand && (
+              <p className="error">{errors.brand.message}</p>
+            )}
+          </div>
 
           <div>
             <label className="label">Model</label>
@@ -217,14 +215,13 @@ const   AddProduct = () => {
         )}
 
         <button
-          disabled={loading}
+          disabled={isPending}
           className="w-full bg-[#5C2E23] text-white py-2 rounded hover:bg-[#974d3b] disabled:opacity-50"
         >
-          {loading ? "Saving..." : "Add Product"}
+          {isPending ? "Saving..." : "Add Product"}
         </button>
       </form>
 
-      {/* TAILWIND HELPERS */}
       <style jsx>{`
         .input {
           width: 100%;

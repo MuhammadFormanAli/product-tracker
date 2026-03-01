@@ -91,17 +91,20 @@ const ProductSchema = new mongoose.Schema(
     },
 
     previousUsers: {
-      type: Array,
+      type: [
+        {
+          user: AssignedUserSchema, // snapshot of user
+          assignedAt: Date,
+          withdrawnAt: Date,
+        },
+      ],
       default: [],
     },
-
 
     addedBy: {
       type: Object,
       default: {},
     },
-
-    
   },
 
   { timestamps: true },

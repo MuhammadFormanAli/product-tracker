@@ -56,10 +56,11 @@ export default function ProductDetails() {
       {/* HEADER */}
       <div className="bg-white rounded-lg shadow p-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">{product.serialNumber}</h1>
-          <p className="text-sm text-gray-500">
-            {product.brand} • {product.model}
+          
+          <p className="text-2xl font-bold text-gray-500">
+           {product.subCategory} • {product.brand} • {product.model}
           </p>
+          <h1 className=" text-sm">{product.serialNumber}</h1>
         </div>
 
         <div className="flex items-center gap-4">
@@ -136,6 +137,43 @@ export default function ProductDetails() {
           )}
         </div>
       </div>
+
+
+
+
+
+{/* PREVIOUS USERS */}
+{product.previousUsers?.length > 0 && (
+  <div className="bg-white rounded-lg shadow p-6">
+    <h2 className="font-semibold mb-4">📜 Previous Users</h2>
+
+    <div className="space-y-4">
+      {product.previousUsers.map((history, index) => (
+        <div
+          key={index}
+          className="border rounded p-4 bg-gray-50 text-sm"
+        >
+          <p className="font-medium">
+            {history.user?.userName}
+          </p>
+
+          <p className="text-gray-600">
+            Employee ID: {history.user?.employeeId}
+          </p>
+
+          <p className="text-gray-500">
+            Assigned: {formatDate(history.assignedAt)}
+          </p>
+
+          <p className="text-gray-500">
+            Withdrawn: {formatDate(history.withdrawnAt)}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
 
       {/* REPAIR SUMMARY */}
       {product.status === "inRepair" && lastRepair && (

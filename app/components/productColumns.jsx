@@ -17,6 +17,9 @@ export const productColumns = [
   columnHelper.accessor("category", {
     header: "Category",
   }),
+  columnHelper.accessor("subCategory", {
+    header: "Sub Category",
+  }),
   columnHelper.accessor("brand", {
     header: "Brand",
   }),

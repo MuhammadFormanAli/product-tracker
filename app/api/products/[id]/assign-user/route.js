@@ -2,10 +2,7 @@ import { dbConnect } from "@/lib/mongoose";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 
-
 export async function PUT(req, { params }) {
-
-  
   try {
     await dbConnect();
     const body = await req.json();
@@ -26,11 +23,14 @@ export async function PUT(req, { params }) {
       );
     }
 
-    // Move existing user to history
     if (product.assignedUser) {
-      product.previousUsers.push(product.assignedUser);
+      return NextResponse.json(
+        { message: "Product already assigned" },
+        { status: 400 }
+      );
     }
 
+    // JUST assign (no history push here)
     product.assignedUser = body;
     product.status = "inUse";
 
@@ -46,5 +46,3 @@ export async function PUT(req, { params }) {
     );
   }
 }
-
-

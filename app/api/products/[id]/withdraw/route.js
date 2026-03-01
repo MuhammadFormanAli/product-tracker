@@ -2,7 +2,6 @@ import { dbConnect } from "@/lib/mongoose";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 
-
 export async function PUT(req, { params }) {
   try {
     await dbConnect();
@@ -23,7 +22,13 @@ export async function PUT(req, { params }) {
       );
     }
 
-    product.previousUsers.push(product.assignedUser);
+    // Push to previousUsers ONLY when withdrawing
+    product.previousUsers.push({
+      user: product.assignedUser,
+      assignedAt: product.updatedAt, // when it was last updated (assigned time)
+      withdrawnAt: new Date(),
+    });
+
     product.assignedUser = null;
     product.status = "inStock";
 

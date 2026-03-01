@@ -111,6 +111,7 @@ export default function ProductDetails() {
           />
           <Info label="Warranty (months)" value={product.warranty} />
           <Info label="Remarks" value={product.remarks} />
+          <Info label="Added By" value={product.addedBy.adminName} />
         </div>
 
         {/* Assigned User */}
@@ -148,28 +149,33 @@ export default function ProductDetails() {
     <h2 className="font-semibold mb-4">📜 Previous Users</h2>
 
     <div className="space-y-4">
-      {product.previousUsers.map((history, index) => (
-        <div
-          key={index}
-          className="border rounded p-4 bg-gray-50 text-sm"
-        >
-          <p className="font-medium">
-            {history.user?.userName}
-          </p>
+      {[...product.previousUsers]
+        .sort(
+          (a, b) =>
+            new Date(b.withdrawnAt) - new Date(a.withdrawnAt)
+        )
+        .map((history, index) => (
+          <div
+            key={index}
+            className="border rounded p-4 bg-gray-50 text-sm"
+          >
+            <p className="font-medium">
+              {history.user?.userName}
+            </p>
 
-          <p className="text-gray-600">
-            Employee ID: {history.user?.employeeId}
-          </p>
+            <p className="text-gray-600">
+              Employee ID: {history.user?.employeeId}
+            </p>
 
-          <p className="text-gray-500">
-            Assigned: {formatDate(history.assignedAt)}
-          </p>
+            <p className="text-gray-500">
+              Assigned: {formatDate(history.assignedAt)}
+            </p>
 
-          <p className="text-gray-500">
-            Withdrawn: {formatDate(history.withdrawnAt)}
-          </p>
-        </div>
-      ))}
+            <p className="text-gray-500">
+              Withdrawn: {formatDate(history.withdrawnAt)}
+            </p>
+          </div>
+        ))}
     </div>
   </div>
 )}
@@ -260,7 +266,7 @@ export default function ProductDetails() {
 
 function Info({ label, value }) {
   return (
-    <div className="mb-2 text-sm">
+    <div className="mb-2 text-sm capitalize">
       <p className="text-gray-500">{label}</p>
       <p className="font-medium">{value || "—"}</p>
     </div>

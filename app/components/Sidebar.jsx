@@ -11,6 +11,8 @@ import {
   MdDevices,
   MdMenu,
 } from "react-icons/md";
+import logo from '@/public/logo.png'
+
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -77,7 +79,7 @@ const Sidebar = () => {
 
         {/* App Name */}
         <Image
-      src="/logo.png"
+      src={logo}
       width={70}
       height={70}
       alt="Picture of the author"

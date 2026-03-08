@@ -11,7 +11,7 @@ export async function POST(req) {
   try {
     await dbConnect();
     const body = await req.json();
-    console.log("user info from add product api", user?.adminName, body);
+    // console.log("user info from add product api", user?.adminName, body);
 
     if (!user.adminName) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -60,13 +60,27 @@ export async function POST(req) {
     }
 
     //  DUPLICATE SERIAL CHECK
-    const exists = await Product.findOne({ serialNumber });
-    if (exists) {
-      return NextResponse.json(
-        { message: "Serial number already exists" },
-        { status: 409 },
-      );
-    }
+    // const exists = await Product.findOne({ serialNumber });
+    // if (exists) {
+    //   return NextResponse.json(
+    //     { message: "Serial number already exists" },
+    //     { status: 409 },
+    //   );
+    // }
+
+
+    
+    // DUPLICATE SERIAL CHECK
+if (serialNumber !== "N/A") {
+  const exists = await Product.findOne({ serialNumber });
+
+  if (exists) {
+    return NextResponse.json(
+      { message: "Serial number already exists" },
+      { status: 409 }
+    );
+  }
+}
 
     //  BASE PAYLOAD
     const payload = {

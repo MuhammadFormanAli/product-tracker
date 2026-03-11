@@ -6,6 +6,7 @@ const AssignedUserSchema = new mongoose.Schema(
     employeeId: String,
     designation: String,
     location: String,
+    unit: String,
     phone: String,
     email: String,
   },

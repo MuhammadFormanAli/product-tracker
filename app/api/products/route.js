@@ -40,6 +40,7 @@ export async function POST(req) {
       employeeId,
       designation,
       location,
+      unit,
       phone,
       mail,
 
@@ -103,6 +104,7 @@ if (serialNumber !== "N/A") {
         employeeId,
         designation,
         location,
+        unit,
         phone,
         email: mail,
       };
@@ -137,6 +139,11 @@ if (serialNumber !== "N/A") {
     );
   }
 }
+
+
+
+
+
 
 /* ================= GET PRODUCTS ================= */
 export async function GET(req) {

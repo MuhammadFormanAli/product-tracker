@@ -2,10 +2,7 @@
 
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 import { Button } from "@/components/ui/button";
@@ -17,13 +14,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-export default function AssignUserDialog({
-  id,
-  open,
-  setOpen,
-}) {
+export default function AssignUserDialog({ id, open, setOpen }) {
   const queryClient = useQueryClient();
-
+  const units = [
+    "Zone Central",
+    "CCL Central",
+    "Wash Central",
+    "Merchant",
+    "Sample",
+    "Bond",
+    "CCl-1A",
+    "CCl-1B",
+    "CCl-2",
+    "CCl-3",
+    "CCl-4",
+    "CWL-1",
+    "CWL-2",
+    "CWL-3",
+    "CWL-4",
+    "SWDL",
+    "Others",
+  ];
 
   const {
     register,
@@ -33,8 +44,7 @@ export default function AssignUserDialog({
   } = useForm();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) =>
-      axios.put(`/api/products/${id}/assign-user`, data),
+    mutationFn: (data) => axios.put(`/api/products/${id}/assign-user`, data),
 
     onSuccess: () => {
       toast.success("User assigned successfully");
@@ -47,9 +57,7 @@ export default function AssignUserDialog({
     },
 
     onError: (error) => {
-      toast.error(
-        error?.response?.data?.message || "Assignment failed"
-      );
+      toast.error(error?.response?.data?.message || "Assignment failed");
     },
   });
 
@@ -65,29 +73,23 @@ export default function AssignUserDialog({
           className="space-y-4"
         >
           <div>
-            <label className="block mb-1 font-medium">
-              User Name
-            </label>
+            <label className="block mb-1 font-medium">User Name</label>
             <input
               {...register("userName", {
-                required: "User name is required",
+                
               })}
               className="w-full p-2 border rounded"
             />
             {errors.userName && (
-              <p className="text-red-500 text-sm">
-                {errors.userName.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.userName.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">
-              Employee ID
-            </label>
+            <label className="block mb-1 font-medium">Employee ID</label>
             <input
               {...register("employeeId", {
-                required: "Employee ID is required",
+                
               })}
               className="w-full p-2 border rounded"
             />
@@ -99,9 +101,7 @@ export default function AssignUserDialog({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">
-              Designation
-            </label>
+            <label className="block mb-1 font-medium">Designation</label>
             <input
               {...register("designation")}
               className="w-full p-2 border rounded"
@@ -109,9 +109,27 @@ export default function AssignUserDialog({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">
-              Location
-            </label>
+            <label className=" mb-1 font-medium">Unit *</label>
+            <select
+              {...register("unit", { required: "Unit is required" })}
+              className="w-full p-2 border rounded max-h-40 overflow-y-auto"
+            >
+              <option className="w-full p-2 border rounded" value="">
+                Select Unit
+              </option>
+              {units.map((b) => (
+                <option className="w-full p-2 border rounded" key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+            {errors.unit && (
+              <p className="error text-red-500">{errors.unit.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium">Location</label>
             <input
               {...register("location")}
               className="w-full p-2 border rounded"
@@ -119,9 +137,7 @@ export default function AssignUserDialog({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">
-              Phone
-            </label>
+            <label className="block mb-1 font-medium">Phone</label>
             <input
               {...register("phone")}
               className="w-full p-2 border rounded"
@@ -129,9 +145,7 @@ export default function AssignUserDialog({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">
-              Email
-            </label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
               type="email"
               {...register("email")}

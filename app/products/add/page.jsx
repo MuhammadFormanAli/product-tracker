@@ -9,7 +9,25 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 
 const AddProduct = () => {
   const router = useRouter();
-
+  const units = [
+    "Zone Central",
+    "CCL Central",
+    "Wash Central",
+    "Merchant",
+    "Sample",
+    "Bond",
+    "CCl-1A",
+    "CCl-1B",
+    "CCl-2",
+    "CCl-3",
+    "CCl-4",
+    "CWL-1",
+    "CWL-2",
+    "CWL-3",
+    "CWL-4",
+    "SWDL",
+    "Others",
+  ];
   const {
     register,
     handleSubmit,
@@ -82,7 +100,6 @@ const AddProduct = () => {
       >
         {/* BASIC INFO */}
         <div className="grid grid-cols-2 gap-4 border p-4 rounded">
-
           {/* CATEGORY */}
           <div>
             <label className="label">Category *</label>
@@ -109,9 +126,7 @@ const AddProduct = () => {
               {...register("subCategory")}
               disabled={!subCategories.length}
               className={`input ${
-                !subCategories.length
-                  ? "bg-gray-100 cursor-not-allowed"
-                  : ""
+                !subCategories.length ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
             >
               <option value="">
@@ -155,9 +170,7 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-            {errors.brand && (
-              <p className="error">{errors.brand.message}</p>
-            )}
+            {errors.brand && <p className="error">{errors.brand.message}</p>}
           </div>
 
           <div>
@@ -167,7 +180,11 @@ const AddProduct = () => {
 
           <div>
             <label className="label">Purchase Date</label>
-            <input type="date" {...register("purchaseDate")} className="input" />
+            <input
+              type="date"
+              {...register("purchaseDate")}
+              className="input"
+            />
           </div>
 
           <div>
@@ -211,6 +228,30 @@ const AddProduct = () => {
                 />
               </div>
             ))}
+
+            <div>
+              <label className=" mb-1 font-medium">Unit *</label>
+              <select
+                {...register("unit", { required: "Unit is required" })}
+                className="w-full p-2 border rounded max-h-40 overflow-y-auto"
+              >
+                <option className="w-full p-2 border rounded" value="">
+                  Select Unit
+                </option>
+                {units.map((b) => (
+                  <option
+                    className="w-full p-2 border rounded"
+                    key={b}
+                    value={b}
+                  >
+                    {b}
+                  </option>
+                ))}
+              </select>
+              {errors.unit && (
+                <p className="error text-red-500">{errors.unit.message}</p>
+              )}
+            </div>
           </div>
         )}
 
